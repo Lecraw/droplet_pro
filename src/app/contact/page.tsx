@@ -15,8 +15,8 @@ const team = [
     email: "29leoh@students.harker.org",
   },
   {
-    role: "Chief Financial Officer",
-    abbr: "CFO",
+    role: "Chief Operating Officer",
+    abbr: "COO",
     name: "Bazigh Tahirzad",
     email: "27bazight@students.harker.org",
   },
