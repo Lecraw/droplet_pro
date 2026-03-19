@@ -74,8 +74,8 @@ export default function AlertsPage() {
         {(["all", "unread"] as const).map(f => (
           <button key={f} onClick={() => setFilter(f)}
             className={`px-4 py-2 rounded-lg text-xs font-[family-name:var(--font-mono)] uppercase tracking-wider transition-all ${filter === f
-                ? "bg-[#0066FF] text-white"
-                : "bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#0066FF] hover:text-[#0066FF]"
+              ? "bg-[#0066FF] text-white"
+              : "bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#0066FF] hover:text-[#0066FF]"
               }`}>
             {f === "all" ? "All Alerts" : `Unread (${unreadCount})`}
           </button>
@@ -94,7 +94,7 @@ export default function AlertsPage() {
             <motion.div key={alert.id} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
               className={`bg-white rounded-2xl border-[#E2E8F0] border border-l-4 ${borders[alert.severity as keyof typeof borders]} p-5 shadow-sm flex items-start justify-between gap-4 ${alert.ack ? "opacity-60" : ""}`}>
               <div className="flex items-start gap-3">
-                <div className="mt-0.5">{icons[alert.severity]}</div>
+                <div className="mt-0.5">{icons[alert.severity as keyof typeof icons]}</div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <p className="font-medium text-[#0F172A] text-sm">{alert.title}</p>
