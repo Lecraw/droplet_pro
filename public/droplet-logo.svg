@@ -1,17 +1,43 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 280" fill="none">
-  <defs>
-    <linearGradient id="dropGrad" x1="100" y1="0" x2="100" y2="280" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#0066FF"/>
-      <stop offset="100%" stop-color="#00AAFF"/>
-    </linearGradient>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
-      <feMerge>
-        <feMergeNode in="coloredBlur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
-  <path d="M100 10 C100 10, 20 130, 20 185 C20 230, 55 270, 100 270 C145 270, 180 230, 180 185 C180 130, 100 10, 100 10Z" fill="url(#dropGrad)" filter="url(#glow)"/>
-  <ellipse cx="75" cy="160" rx="20" ry="35" fill="white" opacity="0.15" transform="rotate(-15 75 160)"/>
+  <!-- Droplet body -->
+  <path d="M100 8C100 8 18 128 18 185C18 231 56 272 100 272C144 272 182 231 182 185C182 128 100 8 100 8Z" fill="#55C0EE"/>
+
+  <!-- Half-brain outline (left side) — 3 lobes at top -->
+  <path d="
+    M100 232
+    C90 236 74 231 64 224
+    C50 215 45 200 49 186
+    C41 178 42 162 50 155
+    C44 146 49 138 58 137
+    C55 126 64 119 71 124
+    C73 117 81 114 86 119
+    C89 113 96 115 100 120
+    L100 232Z"
+    stroke="white" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+
+  <!-- Brain fold 1 — lower sulcus -->
+  <path d="M71 228C63 214 60 200 66 187" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Brain fold 2 — upper sulcus -->
+  <path d="M49 187C59 180 62 169 57 158" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Brain fold 3 — top lobe detail -->
+  <path d="M71 124C68 138 63 150 66 162" stroke="white" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Circuit: vertical center stem -->
+  <line x1="100" y1="120" x2="100" y2="232" stroke="white" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Branch 1: right then up → top-right circle -->
+  <polyline points="100,140 120,140 120,125" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="120" cy="118" r="7" stroke="white" stroke-width="3" fill="#55C0EE"/>
+
+  <!-- Branch 2: straight right → mid-upper circle -->
+  <line x1="100" y1="167" x2="144" y2="167" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="144" cy="167" r="7" stroke="white" stroke-width="3" fill="#55C0EE"/>
+
+  <!-- Branch 3: straight right → mid-lower circle -->
+  <line x1="100" y1="192" x2="136" y2="192" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="136" cy="192" r="7" stroke="white" stroke-width="3" fill="#55C0EE"/>
+
+  <!-- Branch 4: right then down → bottom-right circle -->
+  <polyline points="100,213 120,213 120,223" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="120" cy="229" r="7" stroke="white" stroke-width="3" fill="#55C0EE"/>
 </svg>
