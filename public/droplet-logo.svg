@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 280" fill="none">
+  <defs>
+    <linearGradient id="dropGrad" x1="100" y1="0" x2="100" y2="280" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0066FF"/>
+      <stop offset="100%" stop-color="#00AAFF"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <path d="M100 10 C100 10, 20 130, 20 185 C20 230, 55 270, 100 270 C145 270, 180 230, 180 185 C180 130, 100 10, 100 10Z" fill="url(#dropGrad)" filter="url(#glow)"/>
+  <ellipse cx="75" cy="160" rx="20" ry="35" fill="white" opacity="0.15" transform="rotate(-15 75 160)"/>
+</svg>
