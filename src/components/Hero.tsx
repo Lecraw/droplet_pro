@@ -49,7 +49,7 @@ export default function Hero() {
 
             <motion.p initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.35 }}
               className="mt-6 text-base leading-relaxed text-[#64748B] max-w-md">
-              Real-time visibility into water usage, waste, and cooling efficiency across your entire data center — powered by intelligent sensor networks.
+              Real-time visibility into water usage, waste, and efficiency across your entire data center — powered by intelligent sensor networks and AI.
             </motion.p>
 
             <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5 }}

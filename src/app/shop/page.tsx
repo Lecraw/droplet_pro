@@ -6,37 +6,6 @@ import { Product, useShopStore } from "@/store/useShopStore";
 import { ShoppingCart, Check } from "lucide-react";
 import Image from "next/image";
 
-// Per-option price lookup
-const optionPrices: Record<string, Record<string, number>> = {
-  "micro-cooling": {
-    "Capacity:100 kW":  12500,
-    "Capacity:250 kW":  18500,
-    "Capacity:500 kW":  28000,
-  },
-  "hyperscale-cooling": {
-    "Capacity:1 MW":    45000,
-    "Capacity:2.5 MW":  89000,
-    "Capacity:5 MW+":  150000,
-    "Redundancy:Standard (1N)":  0,
-    "Redundancy:High (2N)":     15000,
-    "Redundancy:Extreme (2N+1)": 28000,
-  },
-};
-
-function computePrice(id: string, selected: Record<string, string>, base: number): number {
-  const p = optionPrices[id];
-  if (!p) return base;
-  if (id === "micro-cooling") {
-    return p[`Capacity:${selected["Capacity"]}`] ?? base;
-  }
-  if (id === "hyperscale-cooling") {
-    const cap = p[`Capacity:${selected["Capacity"]}`] ?? base;
-    const red = p[`Redundancy:${selected["Redundancy"]}`] ?? 0;
-    return cap + red;
-  }
-  return base;
-}
-
 export const products: Product[] = [
   {
     id: "sensor-node-v2",
@@ -55,27 +24,20 @@ export const products: Product[] = [
     image: "/intelligent_sensor.png",
   },
   {
-    id: "micro-cooling",
-    name: "Micro Cooling Loop",
-    description: "Autonomous cooling loop management system for edge deployments and small clusters.",
-    price: 12500,
-    category: "cooling",
-    image: "/cooling_system.png",
-    options: [
-      { label: "Capacity", values: ["100 kW", "250 kW", "500 kW"] },
-    ],
+    id: "sensor-node-pro",
+    name: "Sensor Node Pro",
+    description: "High-precision dual-channel sensor with built-in edge AI for anomaly detection and predictive alerts.",
+    price: 749,
+    category: "sensor",
+    image: "/intelligent_sensor.png",
   },
   {
-    id: "hyperscale-cooling",
-    name: "Hyperscale Cooling Core",
-    description: "Enterprise water intelligence core for campus-scale data center infrastructure.",
-    price: 45000,
-    category: "cooling",
-    image: "/cooling_system.png",
-    options: [
-      { label: "Capacity",   values: ["1 MW", "2.5 MW", "5 MW+"] },
-      { label: "Redundancy", values: ["Standard (1N)", "High (2N)", "Extreme (2N+1)"] },
-    ],
+    id: "wireless-gateway",
+    name: "Wireless Mesh Gateway",
+    description: "Long-range LoRaWAN gateway connecting up to 200 sensor nodes. Weatherproof enclosure included.",
+    price: 1250,
+    category: "accessory",
+    image: "/intelligent_sensor.png",
   },
 ];
 
@@ -90,13 +52,12 @@ export default function ShopPage() {
         <div className="mb-16 border-b border-[#E2E8F0] pb-10">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-5 h-px bg-[#0066FF]" />
-            <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.3em] text-[#0066FF]">Hardware &amp; Infrastructure</p>
+            <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.3em] text-[#0066FF]">Sensors &amp; Accessories</p>
           </div>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <h1 className="font-[family-name:var(--font-space-grotesk)] text-4xl md:text-5xl font-bold text-[#0F172A]">Deploy Droplet.</h1>
             <p className="text-[#64748B] max-w-sm text-sm leading-relaxed">
               All hardware integrates seamlessly with the Droplet Intelligence Platform.
-              Pricing adjusts based on configuration.
             </p>
           </div>
           <div className="mt-6 flex flex-wrap gap-6 text-[9px] font-[family-name:var(--font-ibm-plex-mono)] uppercase tracking-widest text-[#94A3B8]">
@@ -124,18 +85,10 @@ function ProductCard({
   index: number;
   onAdd: (p: Product, qty: number, opts?: Record<string, string>) => void;
 }) {
-  const [selected, setSelected] = useState<Record<string, string>>(() => {
-    const init: Record<string, string> = {};
-    product.options?.forEach(o => { init[o.label] = o.values[0]; });
-    return init;
-  });
   const [added, setAdded] = useState(false);
 
-  const price = computePrice(product.id, selected, product.price);
-  const hasOptions = !!product.options?.length;
-
   const handleAdd = () => {
-    onAdd({ ...product, price }, 1, hasOptions ? selected : undefined);
+    onAdd(product, 1);
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);
   };
@@ -147,7 +100,7 @@ function ProductCard({
       transition={{ duration: 0.45, delay: index * 0.08 }}
       className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden hover:border-[#0066FF]/20 hover:shadow-md transition-all duration-300 group flex flex-col"
     >
-      {/* Image area — light background, no dark overlay */}
+      {/* Image area */}
       <div className="relative h-52 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center justify-center p-8 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,102,255,0.04),transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         <Image
@@ -165,57 +118,20 @@ function ProductCard({
       {/* Content */}
       <div className="p-6 flex flex-col flex-1">
         <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.2em] text-[#0066FF] mb-1">
-          {product.category === "sensor" ? "Monitoring Hardware" : product.category === "accessory" ? "Accessory" : "Cooling Infrastructure"}
+          {product.category === "sensor" ? "Monitoring Hardware" : "Accessory"}
         </p>
         <h3 className="font-[family-name:var(--font-space-grotesk)] text-xl font-bold text-[#0F172A] mb-2 leading-tight">{product.name}</h3>
         <p className="text-sm text-[#64748B] leading-relaxed mb-5 flex-1">{product.description}</p>
-
-        {/* Options — each as a segmented selector */}
-        {product.options?.map((opt) => (
-          <div key={opt.label} className="mb-4">
-            <div className="flex items-center justify-between mb-2">
-              <label className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.2em] text-[#94A3B8]">{opt.label}</label>
-              {/* Show price impact for non-first options */}
-              {opt.label === "Redundancy" && (
-                <span className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] text-[#64748B]">
-                  {selected["Redundancy"] === "Standard (1N)" ? "Included" :
-                   selected["Redundancy"] === "High (2N)" ? "+$15,000" : "+$28,000"}
-                </span>
-              )}
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {opt.values.map(val => (
-                <button
-                  key={val}
-                  onClick={() => setSelected(prev => ({ ...prev, [opt.label]: val }))}
-                  className={`text-xs px-3 py-1.5 rounded-md border font-[family-name:var(--font-ibm-plex-mono)] transition-all ${
-                    selected[opt.label] === val
-                      ? "border-[#0066FF] bg-[#0066FF]/5 text-[#0066FF]"
-                      : "border-[#E2E8F0] text-[#64748B] hover:border-[#94A3B8]"
-                  }`}
-                >
-                  {val}
-                </button>
-              ))}
-            </div>
-          </div>
-        ))}
 
         {/* Price + CTA */}
         <div className="flex items-end justify-between pt-4 border-t border-[#F0F4F8] mt-auto">
           <div>
             <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-widest text-[#94A3B8] mb-0.5">
-              {hasOptions ? "Configured price" : "Unit price"}
+              Unit price
             </p>
-            <motion.p
-              key={price}
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2 }}
-              className="font-[family-name:var(--font-space-grotesk)] text-2xl font-bold text-[#0F172A]"
-            >
-              ${price.toLocaleString()}
-            </motion.p>
+            <p className="font-[family-name:var(--font-space-grotesk)] text-2xl font-bold text-[#0F172A]">
+              ${product.price.toLocaleString()}
+            </p>
           </div>
           <button
             onClick={handleAdd}

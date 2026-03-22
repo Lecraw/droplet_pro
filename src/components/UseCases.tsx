@@ -9,7 +9,7 @@ const cases = [
     index: "01",
     label: "HYPERSCALE",
     title: "Hyperscale Data Centers",
-    desc: "Monitor and optimize water consumption across campus-scale cooling infrastructure with hundreds of cooling loops.",
+    desc: "Monitor and optimize water consumption across campus-scale infrastructure with hundreds of sensor nodes.",
     stat: "500K+",
     statLabel: "gallons / day managed",
     metrics: [
@@ -21,7 +21,7 @@ const cases = [
     index: "02",
     label: "AI TRAINING",
     title: "AI Training Clusters",
-    desc: "GPU-dense environments generate extreme thermal loads. Droplet ensures cooling keeps pace without waste.",
+    desc: "GPU-dense environments generate extreme thermal loads. Droplet sensors provide real-time visibility to prevent waste.",
     stat: "3.2×",
     statLabel: "efficiency gain",
     metrics: [

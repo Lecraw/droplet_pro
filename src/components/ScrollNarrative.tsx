@@ -14,7 +14,7 @@ const milestones = [
   {
     label: "INVISIBLE LOSS",
     stat: "Untracked inefficiency",
-    desc: "Cooling systems across data centers lack real-time monitoring — waste is invisible.",
+    desc: "Water systems across data centers lack real-time monitoring — waste is invisible.",
     side: "right" as const,
   },
   {
@@ -26,7 +26,7 @@ const milestones = [
   {
     label: "AI OPTIMIZATION",
     stat: "Dynamic adjustments",
-    desc: "The system continuously learns and improves cooling efficiency autonomously.",
+    desc: "The system continuously learns and improves water efficiency autonomously.",
     side: "right" as const,
   },
   {

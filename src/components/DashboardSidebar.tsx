@@ -6,22 +6,22 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Radio,
-  ThermometerSnowflake,
   Settings,
   LogOut,
   BarChart3,
   FileText,
   Bell,
+  BotMessageSquare,
   ChevronRight,
 } from "lucide-react";
 
 const navItems = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/dashboard/sensors", label: "Sensor Nodes", icon: Radio },
-  { href: "/dashboard/cooling", label: "Cooling Systems", icon: ThermometerSnowflake },
   { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/dashboard/reports", label: "Reports", icon: FileText },
   { href: "/dashboard/alerts", label: "Alerts", icon: Bell },
+  { href: "/dashboard/ai", label: "Droplet AI", icon: BotMessageSquare },
 ];
 
 export default function DashboardSidebar() {
@@ -100,7 +100,7 @@ export default function DashboardSidebar() {
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             <span className="font-[family-name:var(--font-mono)] text-[8px] uppercase tracking-widest text-[#64748B]">All Systems Normal</span>
           </div>
-          <span className="font-[family-name:var(--font-mono)] text-[8px] text-[#94A3B8]">42 nodes</span>
+          <span className="font-[family-name:var(--font-mono)] text-[8px] text-[#94A3B8]">16 nodes</span>
         </div>
       </div>
     </aside>

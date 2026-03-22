@@ -35,7 +35,7 @@ const layers = [
     spec: "Self-learning · Multi-zone · Audit trail",
     points: [
       "Continuously detects inefficiencies in real time",
-      "Automates cooling adjustments per zone",
+      "Automates flow adjustments per zone",
       "Learns usage patterns across deployments",
       "Up to 40% water consumption reduction",
     ],

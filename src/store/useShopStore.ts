@@ -5,7 +5,7 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  category: 'sensor' | 'cooling' | 'accessory';
+  category: 'sensor' | 'accessory';
   image: string;
   options?: { label: string; values: string[] }[];
 }
