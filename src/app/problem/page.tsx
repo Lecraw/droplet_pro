@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -258,181 +258,114 @@ export default function ProblemPage() {
   );
 }
 
-/* ─── Scroll-driven scale comparison ─── */
+/* ─── Sticky left / scrolling right scale section ─── */
 
 const scaleItems = [
   {
-    label: "ONE HYPERSCALE DATA CENTER",
+    label: "One Hyperscale Data Center",
     value: "120M",
     unit: "gal / day",
     equivalent: "Enough to supply a city of 100,000 people",
     color: "#0066FF",
+    detail: "A single campus-scale data center pumps over 120 million gallons of water through its cooling infrastructure every day. That's more than many mid-size cities consume for all residential, commercial, and industrial use combined.",
   },
   {
-    label: "GLOBAL AI TRAINING (2025)",
+    label: "Global AI Training (2025)",
     value: "6.6B",
     unit: "gal / year",
     equivalent: "More than the annual water use of half of U.S. states",
     color: "#8B5CF6",
+    detail: "The global AI training industry now consumes 6.6 billion gallons of water annually — and that number is doubling every 18 months. Most of this water is used once and discharged, with no recapture or optimization in place.",
   },
   {
-    label: "SINGLE GPU SERVER RACK",
+    label: "Single GPU Server Rack",
     value: "300K",
     unit: "gal / year",
     equivalent: "5× the average American household's annual usage",
     color: "#0066FF",
+    detail: "A single rack of high-density GPU servers requires 300,000 gallons of cooling water per year. Modern AI clusters can fill an entire floor with these racks — each one consuming more water than five American families use in a year.",
   },
   {
-    label: "WASTED COOLING WATER (INDUSTRY)",
+    label: "Wasted Cooling Water",
     value: "3.2B",
     unit: "gal / year",
     equivalent: "Could fill 4,800 Olympic swimming pools annually",
     color: "#EF4444",
+    detail: "Industry estimates show that 3.2 billion gallons of cooling water are wasted every year through over-provisioning, undetected leaks, and suboptimal flow rates. This isn't a technology problem — it's a visibility problem. And it's exactly what Droplet solves.",
   },
 ];
 
 function ScaleScrollSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
-
   return (
-    <section
-      ref={containerRef}
-      className="relative bg-[#0F172A]"
-      style={{ height: `${(scaleItems.length + 1) * 100}vh` }}
-    >
-      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
-        {/* Background grid */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }} />
+    <section className="bg-[#0F172A]">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="grid lg:grid-cols-[1fr_1fr] gap-0">
+
+          {/* Left — sticky */}
+          <div className="lg:sticky lg:top-0 lg:h-screen flex flex-col justify-center py-20 lg:py-0 lg:pr-16 border-r-0 lg:border-r border-white/5">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-5 h-px bg-[#0066FF]" />
+              <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.3em] text-[#0066FF]">Scale</p>
+            </div>
+            <h2 className="font-[family-name:var(--font-space-grotesk)] text-4xl md:text-5xl font-bold text-white leading-tight mb-6">
+              Putting the numbers in perspective.
+            </h2>
+            <p className="text-[#94A3B8] leading-relaxed max-w-md mb-8">
+              The water crisis in AI infrastructure isn&apos;t abstract — it&apos;s measured in billions of gallons, happening right now, at facilities around the world.
+            </p>
+            <div className="flex items-center gap-4 text-[9px] font-[family-name:var(--font-ibm-plex-mono)] uppercase tracking-widest text-[#475569]">
+              <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[#0066FF]" />DOE 2024</span>
+              <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[#8B5CF6]" />IEA Report</span>
+              <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[#EF4444]" />Uptime Institute</span>
+            </div>
+          </div>
+
+          {/* Right — scrolling cards */}
+          <div className="py-10 lg:py-20 lg:pl-16 space-y-6">
+            {scaleItems.map((item, i) => (
+              <motion.div
+                key={item.label}
+                initial={{ opacity: 0, x: 40 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.5, delay: 0.05 }}
+                className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 hover:bg-white/[0.05] transition-colors"
+              >
+                {/* Top row: number + label */}
+                <div className="flex items-start justify-between gap-4 mb-5">
+                  <div>
+                    <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-widest text-[#475569] mb-2">
+                      {String(i + 1).padStart(2, "0")} / {String(scaleItems.length).padStart(2, "0")}
+                    </p>
+                    <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[10px] uppercase tracking-[0.2em] text-[#64748B]">
+                      {item.label}
+                    </p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="font-[family-name:var(--font-space-grotesk)] text-5xl md:text-6xl font-bold leading-none" style={{ color: item.color }}>
+                      {item.value}
+                    </p>
+                    <p className="font-[family-name:var(--font-ibm-plex-mono)] text-xs text-[#64748B] tracking-wider mt-1">
+                      {item.unit}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <p className="text-sm text-[#94A3B8] leading-relaxed mb-5">
+                  {item.detail}
+                </p>
+
+                {/* Equivalent pill */}
+                <div className="flex items-center gap-2.5 bg-white/[0.03] border border-white/[0.06] rounded-lg px-4 py-3">
+                  <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+                  <p className="text-xs text-[#64748B]">{item.equivalent}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
-
-        {/* Corner labels */}
-        <span className="absolute top-8 left-8 font-[family-name:var(--font-ibm-plex-mono)] text-[9px] text-[#475569] tracking-widest uppercase select-none hidden lg:block">
-          SCROLL TO EXPLORE
-        </span>
-        <span className="absolute top-8 right-8 font-[family-name:var(--font-ibm-plex-mono)] text-[9px] text-[#475569] tracking-widest uppercase select-none hidden lg:block">
-          SCALE / PERSPECTIVE
-        </span>
-
-        {/* Section title — visible at start */}
-        <ScaleTitle scrollYProgress={scrollYProgress} />
-
-        {/* Scale items */}
-        {scaleItems.map((item, i) => {
-          const segmentSize = 1 / (scaleItems.length + 1);
-          const start = (i + 1) * segmentSize;
-          const fadeIn = start + segmentSize * 0.15;
-          const hold = start + segmentSize * 0.75;
-          const fadeOut = start + segmentSize * 0.92;
-
-          return (
-            <ScaleCard
-              key={item.label}
-              item={item}
-              index={i}
-              total={scaleItems.length}
-              scrollYProgress={scrollYProgress}
-              range={[start, fadeIn, hold, fadeOut]}
-            />
-          );
-        })}
       </div>
     </section>
-  );
-}
-
-function ScaleTitle({ scrollYProgress }: { scrollYProgress: ReturnType<typeof useScroll>["scrollYProgress"] }) {
-  const opacity = useTransform(scrollYProgress, [0, 0.08, 0.15, 0.2], [0, 1, 1, 0]);
-  const y = useTransform(scrollYProgress, [0, 0.08, 0.15, 0.2], [40, 0, 0, -40]);
-
-  return (
-    <motion.div
-      style={{ opacity, y, willChange: "transform, opacity" }}
-      className="absolute inset-0 flex items-center justify-center px-8 transform-gpu"
-    >
-      <div className="text-center">
-        <div className="flex items-center justify-center gap-3 mb-6">
-          <div className="w-8 h-px bg-[#0066FF]" />
-          <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.3em] text-[#0066FF]">Scale</p>
-          <div className="w-8 h-px bg-[#0066FF]" />
-        </div>
-        <h2 className="font-[family-name:var(--font-space-grotesk)] text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
-          Putting the numbers<br />in perspective.
-        </h2>
-      </div>
-    </motion.div>
-  );
-}
-
-function ScaleCard({
-  item,
-  index,
-  total,
-  scrollYProgress,
-  range,
-}: {
-  item: (typeof scaleItems)[number];
-  index: number;
-  total: number;
-  scrollYProgress: ReturnType<typeof useScroll>["scrollYProgress"];
-  range: [number, number, number, number];
-}) {
-  const y = useTransform(scrollYProgress, [range[0], range[1], range[2], range[3]], [80, 0, 0, -80]);
-  const opacity = useTransform(scrollYProgress, [range[0], range[1], range[2], range[3]], [0, 1, 1, 0]);
-  const scale = useTransform(scrollYProgress, [range[0], range[1], range[2], range[3]], [0.9, 1, 1, 0.95]);
-
-  return (
-    <motion.div
-      style={{ y, opacity, scale, willChange: "transform, opacity" }}
-      className="absolute inset-0 flex items-center justify-center px-8 transform-gpu"
-    >
-      <div className="max-w-2xl w-full text-center">
-        {/* Step indicator */}
-        <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.3em] text-[#475569] mb-8">
-          {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-        </p>
-
-        {/* Label */}
-        <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[10px] uppercase tracking-[0.25em] text-[#64748B] mb-4">
-          {item.label}
-        </p>
-
-        {/* Big number */}
-        <p className="font-[family-name:var(--font-space-grotesk)] text-7xl md:text-8xl lg:text-9xl font-bold leading-none mb-2" style={{ color: item.color }}>
-          {item.value}
-        </p>
-        <p className="font-[family-name:var(--font-ibm-plex-mono)] text-sm text-[#64748B] tracking-wider mb-10">
-          {item.unit}
-        </p>
-
-        {/* Equivalent */}
-        <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 backdrop-blur-sm rounded-full px-6 py-3">
-          <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-          <p className="text-sm text-[#94A3B8]">{item.equivalent}</p>
-        </div>
-
-        {/* Progress dots */}
-        <div className="flex items-center justify-center gap-2 mt-10">
-          {scaleItems.map((_, j) => (
-            <div
-              key={j}
-              className="rounded-full transition-all duration-300"
-              style={{
-                width: j === index ? 20 : 4,
-                height: 4,
-                backgroundColor: j === index ? item.color : "rgba(255,255,255,0.15)",
-              }}
-            />
-          ))}
-        </div>
-      </div>
-    </motion.div>
   );
 }
