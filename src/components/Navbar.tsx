@@ -9,7 +9,8 @@ import { useShopStore } from "@/store/useShopStore";
 
 const navLinks = [
   { label: "Product", href: "/#product" },
-  { label: "Data", href: "/#data" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "About", href: "/about" },
   { label: "Shop", href: "/shop" },
 ];
 
