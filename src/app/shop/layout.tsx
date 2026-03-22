@@ -1,4 +1,3 @@
-import CartDrawer from "@/components/CartDrawer";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -14,7 +13,6 @@ export default function ShopLayout({
         {children}
       </main>
       <Footer />
-      <CartDrawer />
     </>
   );
 }

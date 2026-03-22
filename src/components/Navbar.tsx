@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart, LogIn } from "lucide-react";
 import { useShopStore } from "@/store/useShopStore";
+import CartDrawer from "@/components/CartDrawer";
 
 const navLinks = [
   { label: "Product", href: "/#product" },
@@ -69,9 +70,9 @@ export default function Navbar() {
 
           {/* Actions & CTA */}
           <div className="hidden md:flex items-center gap-6">
-            <button 
+            <button
               onClick={toggleCart}
-              className="relative text-[#64748B] hover:text-[#0F172A] transition-colors"
+              className="relative text-[#64748B] hover:text-[#0F172A] transition-colors cursor-pointer"
             >
               <ShoppingCart className="w-5 h-5" />
               {cartItemsCount > 0 && (
@@ -97,7 +98,7 @@ export default function Navbar() {
 
           {/* Mobile toggle */}
           <div className="md:hidden flex items-center gap-4">
-            <button onClick={toggleCart} className="relative text-[#64748B]">
+            <button onClick={toggleCart} className="relative text-[#64748B] cursor-pointer">
               <ShoppingCart className="w-5 h-5" />
               {cartItemsCount > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 bg-[#0066FF] text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
@@ -150,6 +151,7 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+      <CartDrawer />
     </motion.nav>
   );
 }
