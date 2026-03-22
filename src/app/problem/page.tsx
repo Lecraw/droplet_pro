@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -183,30 +183,8 @@ export default function ProblemPage() {
           </div>
         </section>
 
-        {/* Scale comparison */}
-        <section className="py-24 px-6 lg:px-8 bg-[#F8FAFC]">
-          <div className="max-w-5xl mx-auto">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-5 h-px bg-[#0066FF]" />
-              <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.3em] text-[#0066FF]">Scale</p>
-            </div>
-            <h2 className="font-[family-name:var(--font-space-grotesk)] text-3xl md:text-4xl font-bold text-[#0F172A] mb-12">Putting the numbers in perspective.</h2>
-
-            <div className="grid md:grid-cols-2 gap-5">
-              {comparisonData.map((item, i) => (
-                <motion.div key={item.label} initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.08 }}
-                  className="bg-white border border-[#E2E8F0] rounded-2xl p-7">
-                  <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-widest text-[#94A3B8] mb-2">{item.label}</p>
-                  <p className="font-[family-name:var(--font-space-grotesk)] text-2xl font-bold text-[#0F172A] mb-3">{item.value}</p>
-                  <div className="flex items-start gap-2 pt-3 border-t border-[#F0F4F8]">
-                    <span className="mt-1 w-1.5 h-1.5 rounded-full bg-[#0066FF] shrink-0" />
-                    <p className="text-sm text-[#64748B] leading-relaxed">{item.equivalent}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* Scale comparison — scroll-driven */}
+        <ScaleScrollSection />
 
         {/* Data center image + Droplet's answer */}
         <section className="py-24 px-6 lg:px-8">
@@ -277,5 +255,184 @@ export default function ProblemPage() {
       </div>
       <Footer />
     </>
+  );
+}
+
+/* ─── Scroll-driven scale comparison ─── */
+
+const scaleItems = [
+  {
+    label: "ONE HYPERSCALE DATA CENTER",
+    value: "120M",
+    unit: "gal / day",
+    equivalent: "Enough to supply a city of 100,000 people",
+    color: "#0066FF",
+  },
+  {
+    label: "GLOBAL AI TRAINING (2025)",
+    value: "6.6B",
+    unit: "gal / year",
+    equivalent: "More than the annual water use of half of U.S. states",
+    color: "#8B5CF6",
+  },
+  {
+    label: "SINGLE GPU SERVER RACK",
+    value: "300K",
+    unit: "gal / year",
+    equivalent: "5× the average American household's annual usage",
+    color: "#0066FF",
+  },
+  {
+    label: "WASTED COOLING WATER (INDUSTRY)",
+    value: "3.2B",
+    unit: "gal / year",
+    equivalent: "Could fill 4,800 Olympic swimming pools annually",
+    color: "#EF4444",
+  },
+];
+
+function ScaleScrollSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+
+  return (
+    <section
+      ref={containerRef}
+      className="relative bg-[#0F172A]"
+      style={{ height: `${(scaleItems.length + 1) * 100}vh` }}
+    >
+      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
+        {/* Background grid */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
+            backgroundSize: "60px 60px",
+          }} />
+        </div>
+
+        {/* Corner labels */}
+        <span className="absolute top-8 left-8 font-[family-name:var(--font-ibm-plex-mono)] text-[9px] text-[#475569] tracking-widest uppercase select-none hidden lg:block">
+          SCROLL TO EXPLORE
+        </span>
+        <span className="absolute top-8 right-8 font-[family-name:var(--font-ibm-plex-mono)] text-[9px] text-[#475569] tracking-widest uppercase select-none hidden lg:block">
+          SCALE / PERSPECTIVE
+        </span>
+
+        {/* Section title — visible at start */}
+        <ScaleTitle scrollYProgress={scrollYProgress} />
+
+        {/* Scale items */}
+        {scaleItems.map((item, i) => {
+          const segmentSize = 1 / (scaleItems.length + 1);
+          const start = (i + 1) * segmentSize;
+          const fadeIn = start + segmentSize * 0.15;
+          const hold = start + segmentSize * 0.75;
+          const fadeOut = start + segmentSize * 0.92;
+
+          return (
+            <ScaleCard
+              key={item.label}
+              item={item}
+              index={i}
+              total={scaleItems.length}
+              scrollYProgress={scrollYProgress}
+              range={[start, fadeIn, hold, fadeOut]}
+            />
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function ScaleTitle({ scrollYProgress }: { scrollYProgress: ReturnType<typeof useScroll>["scrollYProgress"] }) {
+  const opacity = useTransform(scrollYProgress, [0, 0.08, 0.15, 0.2], [0, 1, 1, 0]);
+  const y = useTransform(scrollYProgress, [0, 0.08, 0.15, 0.2], [40, 0, 0, -40]);
+
+  return (
+    <motion.div
+      style={{ opacity, y, willChange: "transform, opacity" }}
+      className="absolute inset-0 flex items-center justify-center px-8 transform-gpu"
+    >
+      <div className="text-center">
+        <div className="flex items-center justify-center gap-3 mb-6">
+          <div className="w-8 h-px bg-[#0066FF]" />
+          <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.3em] text-[#0066FF]">Scale</p>
+          <div className="w-8 h-px bg-[#0066FF]" />
+        </div>
+        <h2 className="font-[family-name:var(--font-space-grotesk)] text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+          Putting the numbers<br />in perspective.
+        </h2>
+      </div>
+    </motion.div>
+  );
+}
+
+function ScaleCard({
+  item,
+  index,
+  total,
+  scrollYProgress,
+  range,
+}: {
+  item: (typeof scaleItems)[number];
+  index: number;
+  total: number;
+  scrollYProgress: ReturnType<typeof useScroll>["scrollYProgress"];
+  range: [number, number, number, number];
+}) {
+  const y = useTransform(scrollYProgress, [range[0], range[1], range[2], range[3]], [80, 0, 0, -80]);
+  const opacity = useTransform(scrollYProgress, [range[0], range[1], range[2], range[3]], [0, 1, 1, 0]);
+  const scale = useTransform(scrollYProgress, [range[0], range[1], range[2], range[3]], [0.9, 1, 1, 0.95]);
+
+  return (
+    <motion.div
+      style={{ y, opacity, scale, willChange: "transform, opacity" }}
+      className="absolute inset-0 flex items-center justify-center px-8 transform-gpu"
+    >
+      <div className="max-w-2xl w-full text-center">
+        {/* Step indicator */}
+        <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.3em] text-[#475569] mb-8">
+          {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+        </p>
+
+        {/* Label */}
+        <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[10px] uppercase tracking-[0.25em] text-[#64748B] mb-4">
+          {item.label}
+        </p>
+
+        {/* Big number */}
+        <p className="font-[family-name:var(--font-space-grotesk)] text-7xl md:text-8xl lg:text-9xl font-bold leading-none mb-2" style={{ color: item.color }}>
+          {item.value}
+        </p>
+        <p className="font-[family-name:var(--font-ibm-plex-mono)] text-sm text-[#64748B] tracking-wider mb-10">
+          {item.unit}
+        </p>
+
+        {/* Equivalent */}
+        <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 backdrop-blur-sm rounded-full px-6 py-3">
+          <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+          <p className="text-sm text-[#94A3B8]">{item.equivalent}</p>
+        </div>
+
+        {/* Progress dots */}
+        <div className="flex items-center justify-center gap-2 mt-10">
+          {scaleItems.map((_, j) => (
+            <div
+              key={j}
+              className="rounded-full transition-all duration-300"
+              style={{
+                width: j === index ? 20 : 4,
+                height: 4,
+                backgroundColor: j === index ? item.color : "rgba(255,255,255,0.15)",
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    </motion.div>
   );
 }
