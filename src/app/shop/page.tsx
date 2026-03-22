@@ -83,25 +83,25 @@ export default function ShopPage() {
   const { addToCart } = useShopStore();
 
   return (
-    <div className="pt-24 pb-32 bg-[#F8FAFC] min-h-screen">
+    <div className="pt-24 pb-32 bg-[#060B18] min-h-screen">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
 
         {/* Header — no box */}
-        <div className="mb-16 border-b border-[#E2E8F0] pb-10">
+        <div className="mb-16 border-b border-white/[0.06] pb-10">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-5 h-px bg-[#0066FF]" />
-            <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.3em] text-[#0066FF]">Hardware &amp; Infrastructure</p>
+            <div className="w-5 h-px bg-[#00BFFF]" />
+            <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.3em] text-[#00BFFF]">Hardware &amp; Infrastructure</p>
           </div>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <h1 className="font-[family-name:var(--font-space-grotesk)] text-4xl md:text-5xl font-bold text-[#0F172A]">Deploy Droplet.</h1>
-            <p className="text-[#64748B] max-w-sm text-sm leading-relaxed">
+            <h1 className="font-[family-name:var(--font-space-grotesk)] text-4xl md:text-5xl font-bold text-[#F0F4F8]">Deploy Droplet.</h1>
+            <p className="text-[#8B9DC3] max-w-sm text-sm leading-relaxed">
               All hardware integrates seamlessly with the Droplet Intelligence Platform.
               Pricing adjusts based on configuration.
             </p>
           </div>
-          <div className="mt-6 flex flex-wrap gap-6 text-[9px] font-[family-name:var(--font-ibm-plex-mono)] uppercase tracking-widest text-[#94A3B8]">
-            <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-emerald-400" />Free shipping over $500</span>
-            <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[#0066FF]" />Enterprise financing available</span>
+          <div className="mt-6 flex flex-wrap gap-6 text-[9px] font-[family-name:var(--font-ibm-plex-mono)] uppercase tracking-widest text-[#4A5B78]">
+            <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[#00E5A0]" />Free shipping over $500</span>
+            <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[#00BFFF]" />Enterprise financing available</span>
             <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[#94A3B8]" />5-year warranty included</span>
           </div>
         </div>
@@ -145,11 +145,11 @@ function ProductCard({
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, delay: index * 0.08 }}
-      className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden hover:border-[#0066FF]/20 hover:shadow-md transition-all duration-300 group flex flex-col"
+      className="bg-[#0D1424]/60 border border-white/[0.06] rounded-2xl overflow-hidden hover:border-[#00BFFF]/20 transition-all duration-300 group flex flex-col"
     >
       {/* Image area — light background, no dark overlay */}
-      <div className="relative h-52 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center justify-center p-8 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,102,255,0.04),transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="relative h-52 bg-[#060B18] border-b border-white/[0.06] flex items-center justify-center p-8 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,191,255,0.06),transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         <Image
           src={product.image}
           alt={product.name}
@@ -157,27 +157,27 @@ function ProductCard({
           height={140}
           className="object-contain group-hover:scale-[1.04] transition-transform duration-500"
         />
-        <span className="absolute top-4 left-4 font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-widest text-[#94A3B8] border border-[#E2E8F0] bg-white px-2.5 py-1 rounded-full">
+        <span className="absolute top-4 left-4 font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-widest text-[#4A5B78] border border-white/[0.06] bg-[#0D1424]/60 px-2.5 py-1 rounded-full">
           {product.category}
         </span>
       </div>
 
       {/* Content */}
       <div className="p-6 flex flex-col flex-1">
-        <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.2em] text-[#0066FF] mb-1">
+        <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.2em] text-[#00BFFF] mb-1">
           {product.category === "sensor" ? "Monitoring Hardware" : product.category === "accessory" ? "Accessory" : "Cooling Infrastructure"}
         </p>
-        <h3 className="font-[family-name:var(--font-space-grotesk)] text-xl font-bold text-[#0F172A] mb-2 leading-tight">{product.name}</h3>
-        <p className="text-sm text-[#64748B] leading-relaxed mb-5 flex-1">{product.description}</p>
+        <h3 className="font-[family-name:var(--font-space-grotesk)] text-xl font-bold text-[#F0F4F8] mb-2 leading-tight">{product.name}</h3>
+        <p className="text-sm text-[#8B9DC3] leading-relaxed mb-5 flex-1">{product.description}</p>
 
         {/* Options — each as a segmented selector */}
         {product.options?.map((opt) => (
           <div key={opt.label} className="mb-4">
             <div className="flex items-center justify-between mb-2">
-              <label className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.2em] text-[#94A3B8]">{opt.label}</label>
+              <label className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.2em] text-[#4A5B78]">{opt.label}</label>
               {/* Show price impact for non-first options */}
               {opt.label === "Redundancy" && (
-                <span className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] text-[#64748B]">
+                <span className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] text-[#8B9DC3]">
                   {selected["Redundancy"] === "Standard (1N)" ? "Included" :
                    selected["Redundancy"] === "High (2N)" ? "+$15,000" : "+$28,000"}
                 </span>
@@ -190,8 +190,8 @@ function ProductCard({
                   onClick={() => setSelected(prev => ({ ...prev, [opt.label]: val }))}
                   className={`text-xs px-3 py-1.5 rounded-md border font-[family-name:var(--font-ibm-plex-mono)] transition-all ${
                     selected[opt.label] === val
-                      ? "border-[#0066FF] bg-[#0066FF]/5 text-[#0066FF]"
-                      : "border-[#E2E8F0] text-[#64748B] hover:border-[#94A3B8]"
+                      ? "border-[#00BFFF] bg-[#00BFFF]/5 text-[#00BFFF]"
+                      : "border-white/[0.06] text-[#8B9DC3] hover:border-[#4A5B78]"
                   }`}
                 >
                   {val}
@@ -202,9 +202,9 @@ function ProductCard({
         ))}
 
         {/* Price + CTA */}
-        <div className="flex items-end justify-between pt-4 border-t border-[#F0F4F8] mt-auto">
+        <div className="flex items-end justify-between pt-4 border-t border-white/[0.04] mt-auto">
           <div>
-            <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-widest text-[#94A3B8] mb-0.5">
+            <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-widest text-[#4A5B78] mb-0.5">
               {hasOptions ? "Configured price" : "Unit price"}
             </p>
             <motion.p
@@ -212,7 +212,7 @@ function ProductCard({
               initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2 }}
-              className="font-[family-name:var(--font-space-grotesk)] text-2xl font-bold text-[#0F172A]"
+              className="font-[family-name:var(--font-space-grotesk)] text-2xl font-bold text-[#F0F4F8]"
             >
               ${price.toLocaleString()}
             </motion.p>
@@ -221,8 +221,8 @@ function ProductCard({
             onClick={handleAdd}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all active:scale-95 ${
               added
-                ? "bg-emerald-500 text-white"
-                : "bg-[#0066FF] hover:bg-[#0052CC] text-white shadow-[0_0_16px_rgba(0,102,255,0.18)] hover:shadow-[0_0_24px_rgba(0,102,255,0.32)]"
+                ? "bg-[#00E5A0] text-[#060B18]"
+                : "bg-[#00BFFF] hover:bg-[#00D4FF] text-[#060B18] shadow-[0_0_16px_rgba(0,191,255,0.18)] hover:shadow-[0_0_24px_rgba(0,191,255,0.32)]"
             }`}
           >
             {added ? <Check className="w-4 h-4" /> : <ShoppingCart className="w-4 h-4" />}

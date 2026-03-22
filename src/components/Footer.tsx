@@ -10,7 +10,7 @@ const links: { label: string; href: string }[] = [
 
 export default function Footer() {
   return (
-    <footer className="py-12 px-6 lg:px-8 border-t border-[#E2E8F0]">
+    <footer className="py-12 px-6 lg:px-8 border-t border-white/[0.06] bg-[#060B18]">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           {/* Logo + tagline */}
@@ -20,9 +20,9 @@ export default function Footer() {
               alt="Droplet"
               width={14}
               height={20}
-              className="object-contain opacity-50"
+              className="object-contain brightness-0 invert opacity-40"
             />
-            <span className="font-[family-name:var(--font-ibm-plex-mono)] text-[10px] tracking-widest uppercase text-[#94A3B8]">
+            <span className="font-[family-name:var(--font-jetbrains)] text-[10px] tracking-[0.2em] uppercase text-[#4A5B78]">
               Droplet
             </span>
           </div>
@@ -33,7 +33,7 @@ export default function Footer() {
               <Link
                 key={label}
                 href={href}
-                className="font-[family-name:var(--font-ibm-plex-mono)] text-[10px] uppercase tracking-[0.2em] text-[#64748B] hover:text-[#0066FF] transition-colors duration-200"
+                className="font-[family-name:var(--font-jetbrains)] text-[10px] uppercase tracking-[0.2em] text-[#4A5B78] hover:text-[#00BFFF] transition-colors duration-300"
               >
                 {label}
               </Link>
@@ -41,8 +41,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-[#E2E8F0]">
-          <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[10px] uppercase tracking-[0.15em] text-[#94A3B8]/60">
+        <div className="mt-8 pt-6 border-t border-white/[0.04]">
+          <p className="font-[family-name:var(--font-jetbrains)] text-[10px] uppercase tracking-[0.15em] text-[#4A5B78]/60">
             &copy; {new Date().getFullYear()} Droplet Technologies, Inc. All rights reserved.
           </p>
         </div>

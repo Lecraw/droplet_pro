@@ -22,9 +22,9 @@ const items = [
 ];
 
 const dotColor: Record<string, string> = {
-  data:   "bg-[#0066FF]",
-  status: "bg-emerald-400",
-  meta:   "bg-[#94A3B8]",
+  data:   "bg-[#00BFFF] shadow-[0_0_4px_rgba(0,191,255,0.6)]",
+  status: "bg-[#00E5A0] shadow-[0_0_4px_rgba(0,229,160,0.6)]",
+  meta:   "bg-[#4A5B78]",
 };
 
 function TickerContent() {
@@ -33,7 +33,7 @@ function TickerContent() {
       {items.map((item, i) => (
         <span key={i} className="inline-flex items-center gap-5 mx-6">
           <span className={`w-1 h-1 rounded-full shrink-0 ${dotColor[item.type]}`} />
-          <span className="font-[family-name:var(--font-ibm-plex-mono)] text-[10px] uppercase tracking-[0.18em] text-[#94A3B8] whitespace-nowrap">
+          <span className="font-[family-name:var(--font-jetbrains)] text-[10px] uppercase tracking-[0.18em] text-[#4A5B78] whitespace-nowrap">
             {item.text}
           </span>
         </span>
@@ -44,12 +44,12 @@ function TickerContent() {
 
 export default function TickerBar() {
   return (
-    <div className="relative overflow-hidden border-y border-[#E8EDF4] bg-white py-3">
-      {/* Fade masks on edges */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-white to-transparent z-10" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-white to-transparent z-10" />
+    <div className="relative overflow-hidden border-y border-white/[0.04] bg-[#0D1424]/60 py-3">
+      {/* Fade masks */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#060B18] to-transparent z-10" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#060B18] to-transparent z-10" />
 
-      {/* Scrolling track — two copies for seamless loop */}
+      {/* Scrolling track */}
       <div className="flex items-center" style={{ animation: "ticker 55s linear infinite" }}>
         <TickerContent />
         <TickerContent />
