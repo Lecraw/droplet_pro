@@ -61,7 +61,7 @@ export default function ProblemPage() {
 
   return (
     <>
-      <Navbar />
+      <Navbar dark />
       <div className="min-h-screen bg-white">
 
         {/* Hero */}

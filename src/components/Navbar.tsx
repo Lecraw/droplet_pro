@@ -16,7 +16,7 @@ const navLinks = [
   { label: "Shop", href: "/shop" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ dark = false }: { dark?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { cart, toggleCart } = useShopStore();
@@ -28,6 +28,9 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // When dark prop is set and user hasn't scrolled, use light text
+  const light = dark && !scrolled;
 
   return (
     <motion.nav
@@ -49,9 +52,9 @@ export default function Navbar() {
               alt="Droplet"
               width={32}
               height={44}
-              className="object-contain"
+              className={`object-contain transition-all duration-300 ${light ? "brightness-0 invert" : ""}`}
             />
-            <span className="font-[family-name:var(--font-display)] font-bold text-xl tracking-wider uppercase text-[#0F172A]">
+            <span className={`font-[family-name:var(--font-display)] font-bold text-xl tracking-wider uppercase transition-colors duration-300 ${light ? "text-white" : "text-[#0F172A]"}`}>
               Droplet
             </span>
           </Link>
@@ -62,7 +65,11 @@ export default function Navbar() {
               <Link
                 key={link.label}
                 href={link.href}
-                className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-widest text-[#64748B] hover:text-[#0F172A] transition-colors duration-200"
+                className={`font-[family-name:var(--font-mono)] text-xs uppercase tracking-widest transition-colors duration-200 ${
+                  light
+                    ? "text-white/70 hover:text-white"
+                    : "text-[#64748B] hover:text-[#0F172A]"
+                }`}
               >
                 {link.label}
               </Link>
@@ -73,7 +80,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-6">
             <button
               onClick={toggleCart}
-              className="relative text-[#64748B] hover:text-[#0F172A] transition-colors cursor-pointer"
+              className={`relative transition-colors cursor-pointer ${light ? "text-white/70 hover:text-white" : "text-[#64748B] hover:text-[#0F172A]"}`}
             >
               <ShoppingCart className="w-5 h-5" />
               {cartItemsCount > 0 && (
@@ -84,14 +91,20 @@ export default function Navbar() {
             </button>
             <Link
               href="/login"
-              className="flex items-center gap-2 text-xs font-[family-name:var(--font-mono)] uppercase tracking-wider text-[#64748B] hover:text-[#0F172A] transition-colors"
+              className={`flex items-center gap-2 text-xs font-[family-name:var(--font-mono)] uppercase tracking-wider transition-colors ${
+                light ? "text-white/70 hover:text-white" : "text-[#64748B] hover:text-[#0F172A]"
+              }`}
             >
               <LogIn className="w-4 h-4" />
               Login
             </Link>
             <Link
               href="/#cta"
-              className="inline-flex items-center gap-2 bg-[#0066FF] text-white text-xs font-medium tracking-wide border border-transparent hover:border-[#0066FF] hover:bg-white hover:text-[#0066FF] uppercase px-5 py-2.5 rounded-md transition-all duration-200"
+              className={`inline-flex items-center gap-2 text-xs font-medium tracking-wide uppercase px-5 py-2.5 rounded-md transition-all duration-200 ${
+                light
+                  ? "bg-white text-[#0F172A] border border-transparent hover:bg-white/90"
+                  : "bg-[#0066FF] text-white border border-transparent hover:border-[#0066FF] hover:bg-white hover:text-[#0066FF]"
+              }`}
             >
               Request Access
             </Link>
@@ -99,7 +112,7 @@ export default function Navbar() {
 
           {/* Mobile toggle */}
           <div className="md:hidden flex items-center gap-4">
-            <button onClick={toggleCart} className="relative text-[#64748B] cursor-pointer">
+            <button onClick={toggleCart} className={`relative cursor-pointer ${light ? "text-white/70" : "text-[#64748B]"}`}>
               <ShoppingCart className="w-5 h-5" />
               {cartItemsCount > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 bg-[#0066FF] text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
@@ -112,9 +125,9 @@ export default function Navbar() {
               className="flex flex-col gap-1.5 p-2"
               aria-label="Toggle menu"
             >
-              <span className={`block w-5 h-px bg-[#0F172A] transition-transform duration-200 ${mobileOpen ? "rotate-45 translate-y-[3.5px]" : ""}`} />
-              <span className={`block w-5 h-px bg-[#0F172A] transition-opacity duration-200 ${mobileOpen ? "opacity-0" : ""}`} />
-              <span className={`block w-5 h-px bg-[#0F172A] transition-transform duration-200 ${mobileOpen ? "-rotate-45 -translate-y-[3.5px]" : ""}`} />
+              <span className={`block w-5 h-px transition-transform duration-200 ${light ? "bg-white" : "bg-[#0F172A]"} ${mobileOpen ? "rotate-45 translate-y-[3.5px]" : ""}`} />
+              <span className={`block w-5 h-px transition-opacity duration-200 ${light ? "bg-white" : "bg-[#0F172A]"} ${mobileOpen ? "opacity-0" : ""}`} />
+              <span className={`block w-5 h-px transition-transform duration-200 ${light ? "bg-white" : "bg-[#0F172A]"} ${mobileOpen ? "-rotate-45 -translate-y-[3.5px]" : ""}`} />
             </button>
           </div>
         </div>
