@@ -12,6 +12,7 @@ import {
   BarChart3,
   FileText,
   Bell,
+  Sparkles,
   ChevronRight,
   Sun,
   Moon,
@@ -25,6 +26,7 @@ const navItems = [
   { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/dashboard/reports", label: "Reports", icon: FileText },
   { href: "/dashboard/alerts", label: "Alerts", icon: Bell },
+  { href: "/dashboard/ai", label: "Ask Droplet AI", icon: Sparkles },
 ];
 
 export default function DashboardSidebar() {
@@ -40,7 +42,7 @@ export default function DashboardSidebar() {
     <aside className="w-64 bg-[#0D1424] text-[#F0F4F8] flex flex-col fixed inset-y-0 left-0 z-10 border-r border-white/[0.06]">
       {/* Logo */}
       <div className="p-6 flex items-center gap-3 border-b border-white/[0.06]">
-        <Image src="/droplet-logo.svg" alt="Droplet" width={22} height={30} className="object-contain brightness-0 invert opacity-80" />
+        <Image src="/dropletICONLOGO.png" alt="Droplet" width={36} height={48} className="object-contain opacity-90" />
         <div>
           <span className="font-[family-name:var(--font-syne)] font-bold tracking-widest text-sm text-[#F0F4F8] uppercase">DROPLET</span>
           <p className="font-[family-name:var(--font-jetbrains)] text-[8px] text-[#4A5B78] uppercase tracking-widest mt-0.5">Intelligence OS</p>

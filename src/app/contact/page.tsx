@@ -117,7 +117,7 @@ function ContactContent() {
             </p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <Image src="/droplet-logo.svg" alt="Droplet" width={16} height={22} className="opacity-40" />
+            <Image src="/dropletICONLOGO.png" alt="Droplet" width={16} height={22} className="opacity-50" />
             <span className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-widest text-[#4A5B78]">Droplet Technologies, Inc.</span>
           </div>
         </motion.div>

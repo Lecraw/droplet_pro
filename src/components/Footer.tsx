@@ -16,11 +16,11 @@ export default function Footer() {
           {/* Logo + tagline */}
           <div className="flex items-center gap-3">
             <Image
-              src="/droplet-logo.svg"
+              src="/dropletICONLOGO.png"
               alt="Droplet"
               width={14}
               height={20}
-              className="object-contain brightness-0 invert opacity-40"
+              className="object-contain opacity-50"
             />
             <span className="font-[family-name:var(--font-jetbrains)] text-[10px] tracking-[0.2em] uppercase text-[#4A5B78]">
               Droplet

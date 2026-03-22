@@ -84,11 +84,11 @@ export default function ScrollNarrative() {
           >
             <motion.div style={{ rotateY: dropletRotateY }}>
               <Image
-                src="/droplet-logo.svg"
+                src="/dropletICONLOGO.png"
                 alt="Droplet"
                 width={120}
                 height={168}
-                className="drop-shadow-[0_0_60px_rgba(0,191,255,0.35)] brightness-0 invert"
+                className="drop-shadow-[0_0_60px_rgba(0,191,255,0.35)]"
               />
             </motion.div>
           </motion.div>

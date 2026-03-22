@@ -45,11 +45,11 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-4 group">
             <Image
-              src="/droplet-logo.svg"
+              src="/dropletICONLOGO.png"
               alt="Droplet"
-              width={32}
-              height={44}
-              className="object-contain brightness-0 invert opacity-90 group-hover:opacity-100 transition-opacity"
+              width={44}
+              height={60}
+              className="object-contain opacity-90 group-hover:opacity-100 transition-opacity"
             />
             <span className="font-[family-name:var(--font-syne)] font-bold text-xl tracking-wider uppercase text-[#F0F4F8]">
               Droplet

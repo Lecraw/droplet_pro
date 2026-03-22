@@ -41,11 +41,11 @@ export default function LoginPage() {
           >
             <div className="absolute inset-0 scale-[2] bg-[radial-gradient(circle,rgba(0,191,255,0.15)_0%,transparent_70%)] pointer-events-none" />
             <Image
-              src="/droplet-logo.svg"
+              src="/dropletICONLOGO.png"
               alt="Droplet"
               width={96}
               height={134}
-              className="object-contain drop-shadow-[0_0_30px_rgba(0,191,255,0.35)] brightness-0 invert relative z-10"
+              className="object-contain drop-shadow-[0_0_30px_rgba(0,191,255,0.35)] relative z-10"
             />
           </motion.div>
           <p className="font-[family-name:var(--font-jetbrains)] text-[9px] uppercase tracking-[0.35em] text-[#00BFFF] mt-4">

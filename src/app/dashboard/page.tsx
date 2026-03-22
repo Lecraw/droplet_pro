@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer
 } from "recharts";
-import { Activity, Droplets, TrendingDown, AlertCircle, Zap, Thermometer, Wind, Target, Sparkles, Send, X } from "lucide-react";
+import { Activity, Droplets, TrendingDown, AlertCircle, Zap, Thermometer, Wind, Target } from "lucide-react";
 
 const flowData = [
   { time: "00:00", flow: 4.2 }, { time: "02:00", flow: 3.9 },
@@ -191,157 +190,7 @@ export default function DashboardOverview() {
         </div>
       </div>
 
-      {/* Ask Droplet AI */}
-      <AskDropletAI />
     </div>
-  );
-}
-
-function AskDropletAI() {
-  const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
-  const [messages, setMessages] = useState<{ role: "user" | "ai"; text: string }[]>([
-    { role: "ai", text: "Hello! I'm Droplet AI. Ask me anything about your water infrastructure — consumption trends, anomaly analysis, efficiency recommendations, or predictive insights." },
-  ]);
-  const [loading, setLoading] = useState(false);
-
-  const aiResponses: Record<string, string> = {
-    default: "Based on current telemetry, your system is operating at 94% efficiency. Zone B shows elevated temperatures — I recommend reducing flow by 0.2 L/s and monitoring for the next 6 hours.",
-    water: "Your facility has consumed 128,400 gallons this month, tracking 12% below baseline. At this rate, you'll save approximately 384,000 gallons by end of quarter — a 38% reduction YoY.",
-    zone: "Zone B is the primary concern. Temperature has been elevated (28.5°C) for 72 hours. Root cause analysis suggests a partially blocked filter in the return line. Recommended action: schedule maintenance within 48 hours.",
-    efficiency: "Current PUE is 1.12, which is top-quartile for AI training facilities. The AI optimization engine has made 847 micro-adjustments this month, contributing to a 6% efficiency improvement.",
-    cost: "Water cost savings this quarter: $47,200. Projected annual savings at current trajectory: $189,000. The largest contributor is Zone A optimization, which reduced waste by 31%.",
-    predict: "Based on seasonal patterns and your current GPU utilization forecast, I predict a 15% increase in cooling demand next month. Recommend pre-emptively increasing Zone C capacity by 1.2 L/s.",
-  };
-
-  const getResponse = (q: string): string => {
-    const lower = q.toLowerCase();
-    if (lower.includes("water") || lower.includes("usage") || lower.includes("consumption")) return aiResponses.water;
-    if (lower.includes("zone") || lower.includes("temperature") || lower.includes("anomal")) return aiResponses.zone;
-    if (lower.includes("efficien") || lower.includes("pue") || lower.includes("optim")) return aiResponses.efficiency;
-    if (lower.includes("cost") || lower.includes("sav") || lower.includes("money")) return aiResponses.cost;
-    if (lower.includes("predict") || lower.includes("forecast") || lower.includes("next")) return aiResponses.predict;
-    return aiResponses.default;
-  };
-
-  const handleSend = () => {
-    if (!query.trim()) return;
-    const userMsg = query.trim();
-    setMessages(prev => [...prev, { role: "user", text: userMsg }]);
-    setQuery("");
-    setLoading(true);
-    setTimeout(() => {
-      setMessages(prev => [...prev, { role: "ai", text: getResponse(userMsg) }]);
-      setLoading(false);
-    }, 1200);
-  };
-
-  if (!open) {
-    return (
-      <motion.button
-        onClick={() => setOpen(true)}
-        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-        className="w-full bg-[#0D1424]/60 rounded-2xl border border-white/[0.06] p-6 flex items-center gap-4 hover:border-[#00BFFF]/20 transition-all duration-300 group cursor-pointer text-left"
-      >
-        <div className="p-3 bg-[#00BFFF]/10 rounded-xl border border-[#00BFFF]/15 group-hover:bg-[#00BFFF]/15 transition-colors">
-          <Sparkles className="w-5 h-5 text-[#00BFFF]" />
-        </div>
-        <div className="flex-1">
-          <p className="text-sm font-semibold text-[#F0F4F8]">Ask Droplet AI</p>
-          <p className="text-xs text-[#8B9DC3] mt-0.5">Get instant insights about your water infrastructure, anomalies, and optimization opportunities.</p>
-        </div>
-        <span className="font-[family-name:var(--font-jetbrains)] text-[10px] text-[#4A5B78] uppercase tracking-wider">Open</span>
-      </motion.button>
-    );
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-      className="bg-[#0D1424]/60 rounded-2xl border border-white/[0.06] overflow-hidden"
-    >
-      {/* Header */}
-      <div className="p-4 border-b border-white/[0.06] flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-[#00BFFF]/10 rounded-lg border border-[#00BFFF]/15">
-            <Sparkles className="w-4 h-4 text-[#00BFFF]" />
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-[#F0F4F8]">Droplet AI</p>
-            <p className="font-[family-name:var(--font-jetbrains)] text-[9px] text-[#00BFFF] uppercase tracking-wider">Online</p>
-          </div>
-        </div>
-        <button onClick={() => setOpen(false)} className="text-[#4A5B78] hover:text-[#F0F4F8] transition-colors">
-          <X className="w-4 h-4" />
-        </button>
-      </div>
-
-      {/* Messages */}
-      <div className="p-4 space-y-4 max-h-64 overflow-y-auto">
-        <AnimatePresence>
-          {messages.map((msg, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-              className={`flex gap-3 ${msg.role === "user" ? "justify-end" : ""}`}
-            >
-              {msg.role === "ai" && (
-                <div className="w-6 h-6 rounded-full bg-[#00BFFF]/10 border border-[#00BFFF]/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <Sparkles className="w-3 h-3 text-[#00BFFF]" />
-                </div>
-              )}
-              <div className={`max-w-[80%] px-4 py-3 rounded-xl text-xs leading-relaxed ${
-                msg.role === "user"
-                  ? "bg-[#00BFFF]/10 text-[#F0F4F8] border border-[#00BFFF]/15"
-                  : "bg-white/[0.04] text-[#8B9DC3] border border-white/[0.06]"
-              }`}>
-                {msg.text}
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-        {loading && (
-          <div className="flex gap-3">
-            <div className="w-6 h-6 rounded-full bg-[#00BFFF]/10 border border-[#00BFFF]/20 flex items-center justify-center shrink-0 mt-0.5">
-              <Sparkles className="w-3 h-3 text-[#00BFFF] animate-pulse" />
-            </div>
-            <div className="bg-white/[0.04] border border-white/[0.06] px-4 py-3 rounded-xl">
-              <div className="flex gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#4A5B78] animate-bounce" style={{ animationDelay: "0ms" }} />
-                <span className="w-1.5 h-1.5 rounded-full bg-[#4A5B78] animate-bounce" style={{ animationDelay: "150ms" }} />
-                <span className="w-1.5 h-1.5 rounded-full bg-[#4A5B78] animate-bounce" style={{ animationDelay: "300ms" }} />
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Input */}
-      <div className="p-4 border-t border-white/[0.06]">
-        <div className="flex gap-2">
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSend()}
-            placeholder="Ask about water usage, efficiency, zones, costs..."
-            className="flex-1 bg-white/[0.04] border border-white/[0.06] rounded-lg px-4 py-2.5 text-sm text-[#F0F4F8] placeholder:text-[#4A5B78] focus:outline-none focus:border-[#00BFFF]/30 focus:ring-1 focus:ring-[#00BFFF]/15 transition-all font-[family-name:var(--font-jetbrains)] text-xs"
-          />
-          <button
-            onClick={handleSend}
-            disabled={!query.trim() || loading}
-            className="bg-[#00BFFF] hover:bg-[#00D4FF] text-[#060B18] px-4 rounded-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            <Send className="w-4 h-4" />
-          </button>
-        </div>
-        <div className="flex gap-2 mt-2">
-          {["Water usage?", "Zone B status?", "Cost savings?", "Predict next month"].map(q => (
-            <button key={q} onClick={() => { setQuery(q); }}
-              className="font-[family-name:var(--font-jetbrains)] text-[9px] text-[#4A5B78] hover:text-[#00BFFF] uppercase tracking-wider transition-colors">
-              {q}
-            </button>
-          ))}
-        </div>
-      </div>
-    </motion.div>
   );
 }
 

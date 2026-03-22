@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Download, FileText, Calendar, CheckCircle } from "lucide-react";
+import { Download, FileText, Calendar, CheckCircle, Eye } from "lucide-react";
+import Link from "next/link";
 
 const reports = [
   {
@@ -12,6 +13,7 @@ const reports = [
     size: "2.4 MB",
     status: "Ready",
     generated: "Mar 01, 2026",
+    viewHref: "",
   },
   {
     name: "Q4 2025 Efficiency Analysis",
@@ -20,6 +22,7 @@ const reports = [
     size: "4.1 MB",
     status: "Ready",
     generated: "Jan 05, 2026",
+    viewHref: "",
   },
   {
     name: "Annual Sustainability Report",
@@ -28,6 +31,7 @@ const reports = [
     size: "8.7 MB",
     status: "Ready",
     generated: "Jan 15, 2026",
+    viewHref: "/dashboard/reports/sustainability",
   },
   {
     name: "Zone B Anomaly Investigation",
@@ -36,6 +40,7 @@ const reports = [
     size: "1.2 MB",
     status: "Ready",
     generated: "Feb 19, 2026",
+    viewHref: "",
   },
   {
     name: "March 2026 Telemetry Export",
@@ -44,6 +49,7 @@ const reports = [
     size: "—",
     status: "Generating",
     generated: "—",
+    viewHref: "",
   },
   {
     name: "Zone C GPU Cluster Thermal Analysis",
@@ -52,6 +58,7 @@ const reports = [
     size: "3.2 MB",
     status: "Ready",
     generated: "Mar 05, 2026",
+    viewHref: "",
   },
   {
     name: "Water Reclamation ROI Assessment",
@@ -60,6 +67,7 @@ const reports = [
     size: "5.4 MB",
     status: "Ready",
     generated: "Mar 12, 2026",
+    viewHref: "",
   },
   {
     name: "Compliance Audit — EPA Water Standards",
@@ -68,6 +76,7 @@ const reports = [
     size: "12.1 MB",
     status: "Ready",
     generated: "Feb 28, 2026",
+    viewHref: "",
   },
 ];
 
@@ -155,10 +164,18 @@ export default function ReportsPage() {
                   <p className="text-xs font-medium text-[#8B9DC3]">{r.generated}</p>
                 </div>
                 {r.status === "Ready" ? (
-                  <button className="flex items-center gap-1.5 bg-[#0A0F1E] hover:bg-[#00BFFF] hover:text-[#060B18] text-[#8B9DC3] px-3 py-2 rounded-lg text-xs font-medium transition-all group-hover:bg-[#00BFFF] group-hover:text-[#060B18]">
-                    <Download className="w-3.5 h-3.5" />
-                    Download
-                  </button>
+                  <div className="flex items-center gap-2">
+                    {r.viewHref && (
+                      <Link href={r.viewHref} className="flex items-center gap-1.5 bg-[#00BFFF]/10 hover:bg-[#00BFFF] hover:text-[#060B18] text-[#00BFFF] px-3 py-2 rounded-lg text-xs font-medium transition-all border border-[#00BFFF]/15">
+                        <Eye className="w-3.5 h-3.5" />
+                        View
+                      </Link>
+                    )}
+                    <button className="flex items-center gap-1.5 bg-[#0A0F1E] hover:bg-[#00BFFF] hover:text-[#060B18] text-[#8B9DC3] px-3 py-2 rounded-lg text-xs font-medium transition-all group-hover:bg-[#00BFFF] group-hover:text-[#060B18]">
+                      <Download className="w-3.5 h-3.5" />
+                      Download
+                    </button>
+                  </div>
                 ) : (
                   <span className="flex items-center gap-1.5 text-xs text-[#4A5B78] font-[family-name:var(--font-jetbrains)]">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#FFB020] animate-pulse" />
