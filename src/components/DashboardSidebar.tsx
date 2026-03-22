@@ -13,6 +13,7 @@ import {
   FileText,
   Bell,
   Sparkles,
+  CreditCard,
   ChevronRight,
   Sun,
   Moon,
@@ -27,6 +28,7 @@ const navItems = [
   { href: "/dashboard/reports", label: "Reports", icon: FileText },
   { href: "/dashboard/alerts", label: "Alerts", icon: Bell },
   { href: "/dashboard/ai", label: "Ask Droplet AI", icon: Sparkles },
+  { href: "/dashboard/plans", label: "Plans & Billing", icon: CreditCard },
 ];
 
 export default function DashboardSidebar() {
