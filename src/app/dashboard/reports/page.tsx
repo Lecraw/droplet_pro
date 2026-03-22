@@ -1,8 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { Download, FileText, Calendar, CheckCircle } from "lucide-react";
+import { Download, FileText, Calendar, CheckCircle, Eye, X, ArrowLeft } from "lucide-react";
 
 const reports = [
   {
@@ -12,14 +12,16 @@ const reports = [
     size: "2.4 MB",
     status: "Ready",
     generated: "Mar 01, 2026",
+    pdf: null,
   },
   {
     name: "Q4 2025 Efficiency Analysis",
-    period: "Oct–Dec 2025",
+    period: "Oct\u2013Dec 2025",
     type: "Efficiency",
     size: "4.1 MB",
     status: "Ready",
     generated: "Jan 05, 2026",
+    pdf: null,
   },
   {
     name: "Annual Sustainability Report",
@@ -28,22 +30,25 @@ const reports = [
     size: "8.7 MB",
     status: "Ready",
     generated: "Jan 15, 2026",
+    pdf: "/Droplet_Annual_Sustainability_Report_2025.pdf",
   },
   {
     name: "Zone B Anomaly Investigation",
-    period: "Feb 14–18, 2026",
+    period: "Feb 14\u201318, 2026",
     type: "Incident",
     size: "1.2 MB",
     status: "Ready",
     generated: "Feb 19, 2026",
+    pdf: null,
   },
   {
     name: "March 2026 Telemetry Export",
     period: "March 2026",
     type: "Raw Data",
-    size: "—",
+    size: "\u2014",
     status: "Generating",
-    generated: "—",
+    generated: "\u2014",
+    pdf: null,
   },
 ];
 
@@ -58,12 +63,75 @@ const typeColors: Record<string, string> = {
 export default function ReportsPage() {
   const [generating, setGenerating] = useState(false);
   const [generated, setGenerated] = useState(false);
+  const [viewingPdf, setViewingPdf] = useState<string | null>(null);
+  const [viewingName, setViewingName] = useState("");
 
   const handleGenerate = () => {
     setGenerating(true);
     setTimeout(() => { setGenerating(false); setGenerated(true); }, 2000);
   };
 
+  const openPdf = (pdf: string, name: string) => {
+    setViewingPdf(pdf);
+    setViewingName(name);
+  };
+
+  // ── Full-screen PDF viewer ──
+  if (viewingPdf) {
+    return (
+      <div className="flex flex-col h-[calc(100vh-2rem)]">
+        {/* Toolbar */}
+        <div className="flex items-center justify-between bg-white border border-[#E2E8F0] rounded-xl px-5 py-3 mb-4 shadow-sm">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setViewingPdf(null)}
+              className="flex items-center gap-2 text-[#64748B] hover:text-[#0F172A] transition-colors cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="text-sm font-medium">Back to Reports</span>
+            </button>
+            <span className="text-[#E2E8F0]">|</span>
+            <FileText className="w-4 h-4 text-[#0066FF]" />
+            <span className="text-sm font-bold text-[#0F172A]">{viewingName}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <a
+              href={viewingPdf}
+              download
+              className="flex items-center gap-1.5 bg-[#F0F4F8] hover:bg-[#0066FF] hover:text-white text-[#64748B] px-3 py-2 rounded-lg text-xs font-medium transition-all cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5" />
+              Download
+            </a>
+            <a
+              href={viewingPdf}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 bg-[#F0F4F8] hover:bg-[#0066FF] hover:text-white text-[#64748B] px-3 py-2 rounded-lg text-xs font-medium transition-all cursor-pointer"
+            >
+              <Eye className="w-3.5 h-3.5" />
+              Open in New Tab
+            </a>
+          </div>
+        </div>
+
+        {/* PDF Embed */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex-1 bg-white rounded-xl border border-[#E2E8F0] shadow-sm overflow-hidden"
+        >
+          <iframe
+            src={viewingPdf}
+            className="w-full h-full"
+            title={viewingName}
+          />
+        </motion.div>
+      </div>
+    );
+  }
+
+  // ── Reports list view ──
   return (
     <div className="space-y-8">
       <div className="flex items-start justify-between">
@@ -75,7 +143,7 @@ export default function ReportsPage() {
         <button
           onClick={handleGenerate}
           disabled={generating}
-          className="flex items-center gap-2 bg-[#0066FF] hover:bg-[#0052CC] text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-all shadow-sm disabled:opacity-70"
+          className="flex items-center gap-2 bg-[#0066FF] hover:bg-[#0052CC] text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-all shadow-sm disabled:opacity-70 cursor-pointer"
         >
           {generated ? <CheckCircle className="w-4 h-4" /> : <FileText className="w-4 h-4" />}
           {generating ? "Generating..." : generated ? "Report Queued" : "Generate Report"}
@@ -111,10 +179,12 @@ export default function ReportsPage() {
         <div className="divide-y divide-[#F0F4F8]">
           {reports.map((r, i) => (
             <motion.div key={r.name} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
-              className="px-6 py-4 flex items-center justify-between hover:bg-[#F8FAFC] transition-colors group">
+              className={`px-6 py-4 flex items-center justify-between hover:bg-[#F8FAFC] transition-colors group ${r.pdf ? "cursor-pointer" : ""}`}
+              onClick={r.pdf ? () => openPdf(r.pdf!, r.name) : undefined}
+            >
               <div className="flex items-start gap-4">
-                <div className="mt-0.5 p-2 bg-[#F0F4F8] rounded-lg">
-                  <FileText className="w-4 h-4 text-[#64748B]" />
+                <div className={`mt-0.5 p-2 rounded-lg ${r.pdf ? "bg-teal-50" : "bg-[#F0F4F8]"}`}>
+                  <FileText className={`w-4 h-4 ${r.pdf ? "text-teal-600" : "text-[#64748B]"}`} />
                 </div>
                 <div>
                   <p className="font-medium text-[#0F172A] text-sm">{r.name}</p>
@@ -122,6 +192,12 @@ export default function ReportsPage() {
                     <span className={`text-[10px] px-2 py-0.5 rounded border font-[family-name:var(--font-mono)] uppercase tracking-wider ${typeColors[r.type]}`}>{r.type}</span>
                     <span className="text-xs text-[#94A3B8]">{r.period}</span>
                     <span className="text-xs text-[#94A3B8]">{r.size}</span>
+                    {r.pdf && (
+                      <span className="flex items-center gap-1 text-[10px] text-[#0066FF] font-[family-name:var(--font-mono)] uppercase tracking-wider">
+                        <Eye className="w-3 h-3" />
+                        Viewable
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -131,10 +207,20 @@ export default function ReportsPage() {
                   <p className="text-xs font-medium text-[#64748B]">{r.generated}</p>
                 </div>
                 {r.status === "Ready" ? (
-                  <button className="flex items-center gap-1.5 bg-[#F0F4F8] hover:bg-[#0066FF] hover:text-white text-[#64748B] px-3 py-2 rounded-lg text-xs font-medium transition-all group-hover:bg-[#0066FF] group-hover:text-white">
-                    <Download className="w-3.5 h-3.5" />
-                    Download
-                  </button>
+                  r.pdf ? (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); openPdf(r.pdf!, r.name); }}
+                      className="flex items-center gap-1.5 bg-[#0066FF] text-white px-3 py-2 rounded-lg text-xs font-medium transition-all hover:bg-[#0052CC] cursor-pointer"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      View
+                    </button>
+                  ) : (
+                    <button className="flex items-center gap-1.5 bg-[#F0F4F8] hover:bg-[#0066FF] hover:text-white text-[#64748B] px-3 py-2 rounded-lg text-xs font-medium transition-all group-hover:bg-[#0066FF] group-hover:text-white cursor-pointer">
+                      <Download className="w-3.5 h-3.5" />
+                      Download
+                    </button>
+                  )
                 ) : (
                   <span className="flex items-center gap-1.5 text-xs text-[#94A3B8] font-[family-name:var(--font-mono)]">
                     <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
@@ -166,7 +252,7 @@ export default function ReportsPage() {
                 <span className={`text-[10px] px-2 py-0.5 rounded-full font-[family-name:var(--font-mono)] uppercase tracking-wider ${active ? "bg-emerald-50 text-emerald-700" : "bg-slate-50 text-slate-500"}`}>
                   {active ? "Active" : "Paused"}
                 </span>
-                <button className="text-xs font-[family-name:var(--font-mono)] uppercase tracking-wider text-[#64748B] hover:text-[#0066FF] transition-colors">
+                <button className="text-xs font-[family-name:var(--font-mono)] uppercase tracking-wider text-[#64748B] hover:text-[#0066FF] transition-colors cursor-pointer">
                   Edit
                 </button>
               </div>
