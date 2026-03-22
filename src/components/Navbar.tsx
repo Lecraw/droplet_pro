@@ -9,6 +9,7 @@ import { useShopStore } from "@/store/useShopStore";
 import CartDrawer from "@/components/CartDrawer";
 
 const navLinks = [
+  { label: "The Problem", href: "/problem" },
   { label: "Product", href: "/#product" },
   { label: "Pricing", href: "/pricing" },
   { label: "About", href: "/about" },
