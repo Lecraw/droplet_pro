@@ -310,23 +310,23 @@ export default function ProblemSection() {
               <div className="w-10 h-px bg-[#00BFFF]" />
               <p className="font-[family-name:var(--font-jetbrains)] text-[10px] uppercase tracking-[0.3em] text-[#00BFFF]">The Problem</p>
             </div>
-            <h1 className="font-[family-name:var(--font-syne)] text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#F0F4F8] leading-[1.1] max-w-3xl">
+            <h1 className="font-[family-name:var(--font-syne)] text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#F0F4F8] leading-[1.15] max-w-2xl">
               AI is draining the world&apos;s water.{" "}
               <span className="text-[#00BFFF] drop-shadow-[0_0_30px_rgba(0,191,255,0.3)]">Nobody&apos;s measuring it.</span>
             </h1>
-            <p className="text-[#8B9DC3] max-w-xl text-base leading-relaxed mt-8">
+            <p className="text-[#8B9DC3] max-w-lg text-sm md:text-base leading-relaxed mt-6">
               Every AI query, every GPU cycle, every training run consumes water for cooling.
               The industry is scaling exponentially — but water infrastructure isn&apos;t keeping up.
             </p>
           </motion.div>
+        </motion.div>
 
-          {/* Scroll indicator */}
-          <motion.div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-            animate={{ y: [0, 8, 0], opacity: [0.4, 0.8, 0.4] }}
-            transition={{ duration: 2.5, repeat: Infinity }}>
-            <span className="font-[family-name:var(--font-jetbrains)] text-[9px] uppercase tracking-[0.3em] text-[#4A5B78]">Scroll to explore</span>
-            <div className="w-px h-8 bg-gradient-to-b from-[#00BFFF]/40 to-transparent" />
-          </motion.div>
+        {/* Scroll indicator — pinned to section bottom */}
+        <motion.div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10"
+          animate={{ y: [0, 8, 0], opacity: [0.4, 0.8, 0.4] }}
+          transition={{ duration: 2.5, repeat: Infinity }}>
+          <span className="font-[family-name:var(--font-jetbrains)] text-[9px] uppercase tracking-[0.3em] text-[#4A5B78]">Scroll to explore</span>
+          <div className="w-px h-8 bg-gradient-to-b from-[#00BFFF]/40 to-transparent" />
         </motion.div>
       </section>
 
@@ -350,7 +350,7 @@ export default function ProblemSection() {
                 transition={{ delay: 0.1 + i * 0.1, duration: 0.5 }}
                 className={`p-8 md:p-10 ${i < 2 ? "border-b md:border-b-0 md:border-r border-white/[0.06]" : ""} bg-[#0D1424]/40`}
               >
-                <p className="font-[family-name:var(--font-syne)] text-3xl md:text-4xl font-extrabold text-[#00BFFF] leading-none drop-shadow-[0_0_12px_rgba(0,191,255,0.3)]">
+                <p className="font-[family-name:var(--font-syne)] text-2xl md:text-3xl font-extrabold text-[#00BFFF] leading-none drop-shadow-[0_0_12px_rgba(0,191,255,0.3)]">
                   {value}
                 </p>
                 <p className="font-[family-name:var(--font-jetbrains)] text-[10px] uppercase tracking-[0.2em] text-[#8B9DC3] mt-3">{unit}</p>
@@ -373,7 +373,7 @@ export default function ProblemSection() {
               <div className="w-8 h-px bg-[#00BFFF]" />
               <p className="font-[family-name:var(--font-jetbrains)] text-[10px] uppercase tracking-[0.3em] text-[#00BFFF]">How It Works Today</p>
             </div>
-            <h2 className="font-[family-name:var(--font-syne)] text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#F0F4F8] leading-tight max-w-3xl">
+            <h2 className="font-[family-name:var(--font-syne)] text-xl md:text-2xl lg:text-3xl font-extrabold text-[#F0F4F8] leading-tight max-w-2xl">
               Open-Loop Cooling Systems{" "}
               <span className="text-[#8B9DC3] font-semibold">waste 95% of water on every pass.</span>
             </h2>
@@ -434,7 +434,7 @@ export default function ProblemSection() {
               <div className="w-8 h-px bg-[#00BFFF]" />
               <p className="font-[family-name:var(--font-jetbrains)] text-[10px] uppercase tracking-[0.3em] text-[#00BFFF]">The Data</p>
             </div>
-            <h2 className="font-[family-name:var(--font-syne)] text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#F0F4F8] leading-tight">
+            <h2 className="font-[family-name:var(--font-syne)] text-xl md:text-2xl lg:text-3xl font-extrabold text-[#F0F4F8] leading-tight">
               The numbers don&apos;t lie.
             </h2>
           </motion.div>
@@ -556,7 +556,7 @@ export default function ProblemSection() {
               <div className="w-8 h-px bg-[#00BFFF]" />
               <p className="font-[family-name:var(--font-jetbrains)] text-[10px] uppercase tracking-[0.3em] text-[#00BFFF]">The Cost</p>
             </div>
-            <h2 className="font-[family-name:var(--font-syne)] text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#F0F4F8] leading-tight max-w-2xl">
+            <h2 className="font-[family-name:var(--font-syne)] text-xl md:text-2xl lg:text-3xl font-extrabold text-[#F0F4F8] leading-tight max-w-2xl">
               The hidden price of{" "}
               <span className="text-[#00BFFF]">doing nothing.</span>
             </h2>

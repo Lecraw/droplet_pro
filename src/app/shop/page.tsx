@@ -7,33 +7,11 @@ import { ShoppingCart, Check } from "lucide-react";
 import Image from "next/image";
 
 // Per-option price lookup
-const optionPrices: Record<string, Record<string, number>> = {
-  "micro-cooling": {
-    "Capacity:100 kW":  12500,
-    "Capacity:250 kW":  18500,
-    "Capacity:500 kW":  28000,
-  },
-  "hyperscale-cooling": {
-    "Capacity:1 MW":    45000,
-    "Capacity:2.5 MW":  89000,
-    "Capacity:5 MW+":  150000,
-    "Redundancy:Standard (1N)":  0,
-    "Redundancy:High (2N)":     15000,
-    "Redundancy:Extreme (2N+1)": 28000,
-  },
-};
+const optionPrices: Record<string, Record<string, number>> = {};
 
 function computePrice(id: string, selected: Record<string, string>, base: number): number {
   const p = optionPrices[id];
   if (!p) return base;
-  if (id === "micro-cooling") {
-    return p[`Capacity:${selected["Capacity"]}`] ?? base;
-  }
-  if (id === "hyperscale-cooling") {
-    const cap = p[`Capacity:${selected["Capacity"]}`] ?? base;
-    const red = p[`Redundancy:${selected["Redundancy"]}`] ?? 0;
-    return cap + red;
-  }
   return base;
 }
 
@@ -54,29 +32,6 @@ export const products: Product[] = [
     category: "accessory",
     image: "/intelligent_sensor.png",
   },
-  {
-    id: "micro-cooling",
-    name: "Micro Cooling Loop",
-    description: "Autonomous cooling loop management system for edge deployments and small clusters.",
-    price: 12500,
-    category: "cooling",
-    image: "/cooling_system.png",
-    options: [
-      { label: "Capacity", values: ["100 kW", "250 kW", "500 kW"] },
-    ],
-  },
-  {
-    id: "hyperscale-cooling",
-    name: "Hyperscale Cooling Core",
-    description: "Enterprise water intelligence core for campus-scale data center infrastructure.",
-    price: 45000,
-    category: "cooling",
-    image: "/cooling_system.png",
-    options: [
-      { label: "Capacity",   values: ["1 MW", "2.5 MW", "5 MW+"] },
-      { label: "Redundancy", values: ["Standard (1N)", "High (2N)", "Extreme (2N+1)"] },
-    ],
-  },
 ];
 
 export default function ShopPage() {
@@ -90,7 +45,7 @@ export default function ShopPage() {
         <div className="mb-16 border-b border-white/[0.06] pb-10">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-5 h-px bg-[#00BFFF]" />
-            <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.3em] text-[#00BFFF]">Hardware &amp; Infrastructure</p>
+            <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.3em] text-[#00BFFF]">Sensors &amp; Accessories</p>
           </div>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <h1 className="font-[family-name:var(--font-space-grotesk)] text-4xl md:text-5xl font-bold text-[#F0F4F8]">Deploy Droplet.</h1>
@@ -165,7 +120,7 @@ function ProductCard({
       {/* Content */}
       <div className="p-6 flex flex-col flex-1">
         <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.2em] text-[#00BFFF] mb-1">
-          {product.category === "sensor" ? "Monitoring Hardware" : product.category === "accessory" ? "Accessory" : "Cooling Infrastructure"}
+          {product.category === "sensor" ? "Monitoring Hardware" : "Accessory"}
         </p>
         <h3 className="font-[family-name:var(--font-space-grotesk)] text-xl font-bold text-[#F0F4F8] mb-2 leading-tight">{product.name}</h3>
         <p className="text-sm text-[#8B9DC3] leading-relaxed mb-5 flex-1">{product.description}</p>
