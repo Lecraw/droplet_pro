@@ -2,6 +2,7 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import Image from "next/image";
 
 const layers = [
   {
@@ -109,6 +110,32 @@ export default function ProductSection() {
             </motion.div>
           ))}
         </div>
+
+        {/* Hardware showcase */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.35 }}
+          className="mt-16 bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl p-8 md:p-12 grid md:grid-cols-2 gap-10 items-center">
+          <div>
+            <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.3em] text-[#0066FF] mb-3">The Droplet Node</p>
+            <h3 className="font-[family-name:var(--font-space-grotesk)] text-2xl md:text-3xl font-bold text-[#0F172A] mb-4">Sensor meets intelligence.</h3>
+            <p className="text-sm text-[#64748B] leading-relaxed mb-6">
+              Each Droplet Node pairs an industrial-grade flow sensor with an onboard microcontroller for edge processing. Real-time telemetry is transmitted to the Droplet platform over a secure wireless mesh — no complex wiring or infrastructure changes required.
+            </p>
+            <div className="flex flex-wrap gap-4 text-[9px] font-[family-name:var(--font-ibm-plex-mono)] uppercase tracking-widest text-[#94A3B8]">
+              <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-emerald-400" />Plug &amp; play</span>
+              <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[#0066FF]" />Edge AI ready</span>
+              <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[#94A3B8]" />Sub-100ms latency</span>
+            </div>
+          </div>
+          <div className="flex items-center justify-center">
+            <Image
+              src="/droplet-node.png"
+              alt="Droplet Node — Arduino-based sensor with flow meter"
+              width={500}
+              height={350}
+              className="object-contain"
+            />
+          </div>
+        </motion.div>
 
         {/* Certifications strip */}
         <motion.div initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ duration: 0.4, delay: 0.45 }}

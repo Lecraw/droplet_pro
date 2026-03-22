@@ -13,7 +13,7 @@ export const products: Product[] = [
     description: "Industrial-grade telemetry node for flow, pressure, and temperature. Requires Pipeline Kit.",
     price: 349,
     category: "sensor",
-    image: "/intelligent_sensor.png",
+    image: "/droplet-node.png",
   },
   {
     id: "pipe-kit",
@@ -29,7 +29,7 @@ export const products: Product[] = [
     description: "High-precision dual-channel sensor with built-in edge AI for anomaly detection and predictive alerts.",
     price: 749,
     category: "sensor",
-    image: "/intelligent_sensor.png",
+    image: "/droplet-node.png",
   },
   {
     id: "wireless-gateway",

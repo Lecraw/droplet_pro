@@ -101,6 +101,31 @@ export default function AboutPage() {
           </div>
         </section>
 
+        {/* Hardware showcase */}
+        <section className="py-24 px-6 lg:px-8 bg-white">
+          <div className="max-w-5xl mx-auto">
+            <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
+              className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl p-8 md:p-12 grid md:grid-cols-2 gap-10 items-center">
+              <div className="flex items-center justify-center">
+                <Image
+                  src="/droplet-node.png"
+                  alt="Droplet Node hardware"
+                  width={500}
+                  height={350}
+                  className="object-contain"
+                />
+              </div>
+              <div>
+                <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] uppercase tracking-[0.3em] text-[#0066FF] mb-3">Our Hardware</p>
+                <h3 className="font-[family-name:var(--font-space-grotesk)] text-2xl md:text-3xl font-bold text-[#0F172A] mb-4">Built from the ground up.</h3>
+                <p className="text-sm text-[#64748B] leading-relaxed">
+                  The Droplet Node combines an Arduino-based microcontroller with an industrial flow sensor to capture real-time water telemetry at every critical point. Designed for zero-maintenance deployment in harsh data center environments, each node transmits flow rate, temperature, and pressure data over a secure wireless mesh to the Droplet Intelligence Platform.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
         {/* Values */}
         <section className="py-24 px-6 lg:px-8 bg-[#F8FAFC]">
           <div className="max-w-5xl mx-auto">
