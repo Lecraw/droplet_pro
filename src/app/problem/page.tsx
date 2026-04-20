@@ -223,7 +223,7 @@ export default function ProblemPage() {
                     </div>
                   ))}
                 </div>
-                <Link href="/#cta" className="inline-flex items-center gap-2 bg-[#0066FF] text-white text-sm font-medium px-6 py-3 rounded-lg hover:bg-[#0052CC] transition-colors">
+                <Link href="/request-demo" className="inline-flex items-center gap-2 bg-[#0066FF] text-white text-sm font-medium px-6 py-3 rounded-lg hover:bg-[#0052CC] transition-colors">
                   Start Monitoring
                   <ArrowRight className="w-4 h-4" />
                 </Link>
@@ -243,7 +243,7 @@ export default function ProblemPage() {
               Join the operators who are taking control of their water infrastructure. Deploy Droplet sensors, gain visibility, and start saving — in weeks, not years.
             </p>
             <div className="flex items-center justify-center gap-4">
-              <Link href="/#cta" className="bg-[#0066FF] text-white text-sm font-medium px-7 py-3.5 rounded-lg hover:bg-[#0052CC] transition-colors">
+              <Link href="/request-demo" className="bg-[#0066FF] text-white text-sm font-medium px-7 py-3.5 rounded-lg hover:bg-[#0052CC] transition-colors">
                 Request Access
               </Link>
               <Link href="/pricing" className="border border-white/20 text-white text-sm font-medium px-7 py-3.5 rounded-lg hover:border-white/40 transition-colors">

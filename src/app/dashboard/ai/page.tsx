@@ -58,26 +58,26 @@ export default function DropletAIPage() {
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-1">
-          <div className="p-2 bg-[#0066FF]/8 rounded-lg">
-            <BotMessageSquare className="w-5 h-5 text-[#0066FF]" />
+          <div className="p-2 bg-[#00a6e0]/8 rounded-lg">
+            <BotMessageSquare className="w-5 h-5 text-[#00a6e0]" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-[#0F172A] font-[family-name:var(--font-display)]">Droplet AI</h1>
-            <p className="text-[#64748B] text-sm">Ask questions about your water system, get insights and recommendations.</p>
+            <h1 className="text-3xl font-bold text-[#0a1628] font-[family-name:var(--font-inter-tight)]">Droplet AI</h1>
+            <p className="text-[#64748b] text-sm">Ask questions about your water system, get insights and recommendations.</p>
           </div>
         </div>
       </div>
 
       {/* Chat area */}
-      <div className="flex-1 bg-white rounded-2xl border border-[#E2E8F0] shadow-sm flex flex-col overflow-hidden">
+      <div className="flex-1 bg-white/75 backdrop-blur-sm rounded-2xl border border-[#e2e8f0] shadow-sm flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto p-6 space-y-5">
           {messages.length === 0 && (
             <div className="flex flex-col items-center justify-center h-full text-center">
-              <div className="p-4 bg-[#0066FF]/5 rounded-full mb-4">
-                <Sparkles className="w-8 h-8 text-[#0066FF]" />
+              <div className="p-4 bg-[#00a6e0]/5 rounded-full mb-4">
+                <Sparkles className="w-8 h-8 text-[#00a6e0]" />
               </div>
-              <h2 className="text-lg font-bold text-[#0F172A] mb-2">How can I help?</h2>
-              <p className="text-sm text-[#64748B] max-w-md mb-8">
+              <h2 className="text-lg font-bold text-[#0a1628] mb-2">How can I help?</h2>
+              <p className="text-sm text-[#64748b] max-w-md mb-8">
                 I have access to all your sensor data, zone metrics, and historical trends. Ask me anything about your water infrastructure.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-lg w-full">
@@ -85,7 +85,7 @@ export default function DropletAIPage() {
                   <button
                     key={q}
                     onClick={() => setQuery(q)}
-                    className="text-left text-xs px-4 py-3 rounded-xl border border-[#E2E8F0] text-[#64748B] hover:border-[#0066FF]/30 hover:text-[#0066FF] hover:bg-[#0066FF]/5 transition-all font-[family-name:var(--font-mono)]"
+                    className="text-left text-xs px-4 py-3 rounded-xl border border-[#e2e8f0] text-[#64748b] hover:border-[#00a6e0]/30 hover:text-[#00a6e0] hover:bg-[#00a6e0]/5 transition-all font-[family-name:var(--font-jetbrains-mono)]"
                   >
                     {q}
                   </button>
@@ -98,8 +98,8 @@ export default function DropletAIPage() {
             <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
               <div className={`max-w-[75%] px-5 py-3.5 rounded-2xl text-sm leading-relaxed whitespace-pre-line ${
                 msg.role === "user"
-                  ? "bg-[#0066FF] text-white rounded-br-md"
-                  : "bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] rounded-bl-md"
+                  ? "bg-[#00a6e0] text-white rounded-br-md"
+                  : "bg-[rgba(250,252,255,0.7)] border border-[#e2e8f0] text-[#0a1628] rounded-bl-md"
               }`}>
                 {msg.text}
               </div>
@@ -108,11 +108,11 @@ export default function DropletAIPage() {
 
           {isThinking && (
             <div className="flex justify-start">
-              <div className="bg-[#F8FAFC] border border-[#E2E8F0] px-5 py-3.5 rounded-2xl rounded-bl-md">
+              <div className="bg-[rgba(250,252,255,0.7)] border border-[#e2e8f0] px-5 py-3.5 rounded-2xl rounded-bl-md">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#0066FF] animate-bounce" />
-                  <span className="w-2 h-2 rounded-full bg-[#0066FF] animate-bounce [animation-delay:0.15s]" />
-                  <span className="w-2 h-2 rounded-full bg-[#0066FF] animate-bounce [animation-delay:0.3s]" />
+                  <span className="w-2 h-2 rounded-full bg-[#00a6e0] animate-bounce" />
+                  <span className="w-2 h-2 rounded-full bg-[#00a6e0] animate-bounce [animation-delay:0.15s]" />
+                  <span className="w-2 h-2 rounded-full bg-[#00a6e0] animate-bounce [animation-delay:0.3s]" />
                 </div>
               </div>
             </div>
@@ -121,7 +121,7 @@ export default function DropletAIPage() {
         </div>
 
         {/* Input area */}
-        <div className="p-4 border-t border-[#E2E8F0] bg-[#FAFBFC]">
+        <div className="p-4 border-t border-[#e2e8f0] bg-[#FAFBFC]">
           <div className="flex items-center gap-3">
             <input
               type="text"
@@ -129,12 +129,12 @@ export default function DropletAIPage() {
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
               placeholder="Ask Droplet AI..."
-              className="flex-1 px-4 py-3 rounded-xl border border-[#E2E8F0] text-sm focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 focus:border-[#0066FF] transition-all bg-white"
+              className="flex-1 px-4 py-3 rounded-xl border border-[#e2e8f0] text-sm focus:outline-none focus:ring-2 focus:ring-[#00a6e0]/20 focus:border-[#00a6e0] transition-all bg-white"
             />
             <button
               onClick={handleSubmit}
               disabled={!query.trim() || isThinking}
-              className="p-3 bg-[#0066FF] text-white rounded-xl hover:bg-[#0052CC] transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+              className="p-3 bg-[#00a6e0] text-white rounded-xl hover:bg-[#0088b8] transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
             >
               <Send className="w-4 h-4" />
             </button>

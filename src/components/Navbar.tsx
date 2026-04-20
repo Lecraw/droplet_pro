@@ -99,14 +99,14 @@ export default function Navbar({ dark = false }: { dark?: boolean }) {
               Login
             </Link>
             <Link
-              href="/#cta"
+              href="/request-demo"
               className={`inline-flex items-center gap-2 text-xs font-medium tracking-wide uppercase px-5 py-2.5 rounded-md transition-all duration-200 ${
                 light
                   ? "bg-white text-[#0F172A] border border-transparent hover:bg-white/90"
-                  : "bg-[#0066FF] text-white border border-transparent hover:border-[#0066FF] hover:bg-white hover:text-[#0066FF]"
+                  : "bg-[#0a1628] text-white border border-transparent hover:bg-[#001a4a]"
               }`}
             >
-              Request Access
+              Request Demo
             </Link>
           </div>
 

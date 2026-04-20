@@ -21,7 +21,7 @@ const plans = [
       "Community support",
     ],
     cta: "Get Started",
-    ctaHref: "/#cta",
+    ctaHref: "/request-demo",
   },
   {
     name: "Pro",
@@ -40,7 +40,7 @@ const plans = [
       "Priority email support",
     ],
     cta: "Request Access",
-    ctaHref: "/#cta",
+    ctaHref: "/request-demo",
   },
   {
     name: "Enterprise",
@@ -193,7 +193,7 @@ export default function PricingPage() {
             <h2 className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold text-[#0F172A] mb-4">Ready to get started?</h2>
             <p className="text-[#64748B] mb-8">Deploy your first sensor nodes and start monitoring in minutes.</p>
             <div className="flex items-center justify-center gap-4">
-              <Link href="/#cta" className="bg-[#0066FF] text-white text-sm font-medium px-6 py-3 rounded-lg hover:bg-[#0052CC] transition-colors">
+              <Link href="/request-demo" className="bg-[#0066FF] text-white text-sm font-medium px-6 py-3 rounded-lg hover:bg-[#0052CC] transition-colors">
                 Request Access
               </Link>
               <Link href="/contact" className="border border-[#E2E8F0] text-[#64748B] text-sm font-medium px-6 py-3 rounded-lg hover:border-[#0066FF]/30 hover:text-[#0066FF] transition-all">

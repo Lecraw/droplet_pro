@@ -33,19 +33,33 @@ export default function DashboardSidebar() {
   };
 
   return (
-    <aside className="w-64 bg-white text-[#0F172A] flex flex-col fixed inset-y-0 left-0 z-10 border-r border-[#E2E8F0]">
-      {/* Logo */}
-      <div className="p-6 flex items-center gap-3 border-b border-[#E2E8F0]">
-        <Image src="/droplet-logo.svg" alt="Droplet" width={22} height={30} className="object-contain" />
-        <div>
-          <span className="font-[family-name:var(--font-display)] font-bold tracking-widest text-sm text-[#0F172A] uppercase">DROPLET</span>
-          <p className="font-[family-name:var(--font-mono)] text-[8px] text-[#94A3B8] uppercase tracking-widest mt-0.5">Intelligence OS</p>
-        </div>
+    <aside
+      className="w-64 flex flex-col fixed inset-y-0 left-0 z-10 border-r border-[#e2e8f0]"
+      style={{
+        background: "rgba(255,255,255,0.72)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        color: "#0a1628",
+        fontFamily: "var(--font-inter-tight), var(--font-inter), system-ui, sans-serif",
+      }}
+    >
+      <div className="p-6 flex items-center gap-3 border-b border-[#e2e8f0]">
+        <Image
+          src="/assets/logo-wordmark.png?v=3"
+          alt="Droplet"
+          width={160}
+          height={40}
+          className="object-contain h-9 w-auto"
+        />
       </div>
 
-      {/* Nav label */}
       <div className="px-6 pt-5 pb-2">
-        <span className="font-[family-name:var(--font-mono)] text-[8px] uppercase tracking-[0.25em] text-[#94A3B8]">Navigation</span>
+        <span
+          className="text-[9px] uppercase tracking-[0.25em] text-[#94a3b8]"
+          style={{ fontFamily: "var(--font-jetbrains-mono), monospace" }}
+        >
+          Navigation
+        </span>
       </div>
 
       <nav className="flex-1 px-3 flex flex-col gap-0.5">
@@ -55,52 +69,86 @@ export default function DashboardSidebar() {
             <Link
               key={href}
               href={href}
-              className={`group flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
+              className={`group flex items-center justify-between gap-3 px-3 py-2.5 rounded-full text-sm transition-all duration-150 ${
                 active
-                  ? "bg-[#0066FF]/8 text-[#0066FF] border border-[#0066FF]/15"
-                  : "text-[#64748B] hover:text-[#0F172A] hover:bg-[#F8FAFC] border border-transparent"
+                  ? "bg-[#00a6e0]/10 text-[#00a6e0] border border-[#00a6e0]/25"
+                  : "text-[#64748b] hover:text-[#0a1628] hover:bg-white/60 border border-transparent"
               }`}
             >
               <div className="flex items-center gap-3">
-                <Icon className={`w-4 h-4 shrink-0 ${active ? "text-[#0066FF]" : "text-[#94A3B8] group-hover:text-[#64748B]"}`} />
-                <span className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-wider">{label}</span>
+                <Icon
+                  className={`w-4 h-4 shrink-0 ${
+                    active ? "text-[#00a6e0]" : "text-[#94a3b8] group-hover:text-[#64748b]"
+                  }`}
+                />
+                <span
+                  className="text-[11px] uppercase tracking-[0.18em]"
+                  style={{ fontFamily: "var(--font-jetbrains-mono), monospace" }}
+                >
+                  {label}
+                </span>
               </div>
-              {active && <ChevronRight className="w-3 h-3 text-[#0066FF]" />}
+              {active && <ChevronRight className="w-3 h-3 text-[#00a6e0]" />}
             </Link>
           );
         })}
       </nav>
 
-      {/* Bottom section */}
-      <div className="p-3 border-t border-[#E2E8F0] space-y-0.5">
+      <div className="p-3 border-t border-[#e2e8f0] space-y-0.5">
         <Link
           href="/dashboard/settings"
-          className={`group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
+          className={`group flex items-center gap-3 px-3 py-2.5 rounded-full text-sm transition-all duration-150 ${
             pathname === "/dashboard/settings"
-              ? "bg-[#0066FF]/8 text-[#0066FF] border border-[#0066FF]/15"
-              : "text-[#64748B] hover:text-[#0F172A] hover:bg-[#F8FAFC] border border-transparent"
+              ? "bg-[#00a6e0]/10 text-[#00a6e0] border border-[#00a6e0]/25"
+              : "text-[#64748b] hover:text-[#0a1628] hover:bg-white/60 border border-transparent"
           }`}
         >
-          <Settings className={`w-4 h-4 ${pathname === "/dashboard/settings" ? "text-[#0066FF]" : "text-[#94A3B8]"}`} />
-          <span className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-wider">Settings</span>
+          <Settings
+            className={`w-4 h-4 ${
+              pathname === "/dashboard/settings" ? "text-[#00a6e0]" : "text-[#94a3b8]"
+            }`}
+          />
+          <span
+            className="text-[11px] uppercase tracking-[0.18em]"
+            style={{ fontFamily: "var(--font-jetbrains-mono), monospace" }}
+          >
+            Settings
+          </span>
         </Link>
         <Link
           href="/"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#94A3B8] hover:text-[#0F172A] hover:bg-[#F8FAFC] border border-transparent transition-all duration-150"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-full text-sm text-[#94a3b8] hover:text-[#0a1628] hover:bg-white/60 border border-transparent transition-all duration-150"
         >
           <LogOut className="w-4 h-4" />
-          <span className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-wider">Sign Out</span>
+          <span
+            className="text-[11px] uppercase tracking-[0.18em]"
+            style={{ fontFamily: "var(--font-jetbrains-mono), monospace" }}
+          >
+            Sign Out
+          </span>
         </Link>
       </div>
 
-      {/* System status bar */}
-      <div className="px-4 py-3 bg-[#F8FAFC] border-t border-[#E2E8F0]">
+      <div
+        className="px-4 py-3 border-t border-[#e2e8f0]"
+        style={{ background: "rgba(250,252,255,0.6)" }}
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-[family-name:var(--font-mono)] text-[8px] uppercase tracking-widest text-[#64748B]">All Systems Normal</span>
+            <span
+              className="text-[8px] uppercase tracking-widest text-[#64748b]"
+              style={{ fontFamily: "var(--font-jetbrains-mono), monospace" }}
+            >
+              All Systems Normal
+            </span>
           </div>
-          <span className="font-[family-name:var(--font-mono)] text-[8px] text-[#94A3B8]">16 nodes</span>
+          <span
+            className="text-[8px] text-[#94a3b8]"
+            style={{ fontFamily: "var(--font-jetbrains-mono), monospace" }}
+          >
+            16 nodes
+          </span>
         </div>
       </div>
     </aside>
