@@ -12,7 +12,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import styles from "./overview.module.css";
+import styles from "./dashboard.module.css";
 
 const flowData = [
   { time: "00:00", flow: 4.2 }, { time: "02:00", flow: 3.9 },

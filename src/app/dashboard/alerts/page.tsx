@@ -1,119 +1,181 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useState } from "react";
-import { AlertTriangle, CheckCircle, Info, XCircle, Bell, BellOff } from "lucide-react";
+import { AlertTriangle, Bell, BellOff, CheckCircle, Info, XCircle } from "lucide-react";
+import styles from "../dashboard.module.css";
 
-const allAlerts = [
-  { id: 1, severity: "warning", title: "Zone B — Elevated Temperature", message: "SN-9023 reporting 28.5°C, above soft threshold of 27°C. No action required yet.", time: "2h ago", ack: false },
-  { id: 2, severity: "info", title: "AI Optimization Applied", message: "Droplet AI reduced Zone A flow by 0.3 L/s. Estimated weekly savings: 1,200 gallons.", time: "4h ago", ack: true },
-  { id: 3, severity: "success", title: "PUE Target Achieved", message: "System PUE reached 1.12 — surpassing the Q1 target ahead of schedule.", time: "1d ago", ack: true },
-  { id: 4, severity: "error", title: "SN-9023 Connectivity Degraded", message: "Sensor SN-9023 in Zone B experiencing intermittent dropouts. Failover active.", time: "2d ago", ack: true },
-  { id: 5, severity: "warning", title: "Pressure Spike — Zone C", message: "Pressure momentarily reached 4.8 bar before normalizing. Log retained.", time: "3d ago", ack: false },
-  { id: 6, severity: "info", title: "Monthly Report Ready", message: "February 2026 Water Intelligence Report has been generated and is ready for download.", time: "4d ago", ack: true },
+type Severity = "warning" | "info" | "success" | "error";
+type Alert = { id: number; severity: Severity; title: string; message: string; time: string; ack: boolean; source: string };
+
+const initial: Alert[] = [
+  { id: 1, severity: "warning", source: "Aisle B · SN-9023",  title: "Elevated temperature",        message: "Sensor is reporting 28.5°C, above the 27°C soft threshold. No action required yet — flow restore expected at 15:00.",        time: "2h ago",  ack: false },
+  { id: 2, severity: "info",    source: "Droplet AI",          title: "Optimization applied",        message: "Droplet AI reduced Aisle A flow by 0.3 L/s after detecting thermal headroom. Projected weekly savings: ~1,200 gallons.",         time: "4h ago",  ack: true },
+  { id: 3, severity: "success", source: "System",              title: "PUE target achieved",         message: "System PUE reached 1.12, surpassing the Q1 target three weeks ahead of schedule.",                                                  time: "1d ago",  ack: true },
+  { id: 4, severity: "error",   source: "Aisle B · SN-9023",   title: "Connectivity degraded",       message: "SN-9023 is experiencing intermittent dropouts. Failover is active; physical inspection scheduled.",                                 time: "2d ago",  ack: true },
+  { id: 5, severity: "warning", source: "Aisle C",             title: "Pressure spike observed",      message: "Pressure momentarily reached 4.8 bar before normalizing. Log retained for investigation.",                                         time: "3d ago",  ack: false },
+  { id: 6, severity: "info",    source: "Reports",             title: "Monthly report is ready",     message: "February 2026 Water Intelligence Report has been generated. Open the Reports tab to preview or download.",                           time: "4d ago",  ack: true },
 ];
 
-const icons = {
-  warning: <AlertTriangle className="w-4 h-4 text-amber-500" />,
-  info: <Info className="w-4 h-4 text-blue-400" />,
-  success: <CheckCircle className="w-4 h-4 text-emerald-500" />,
-  error: <XCircle className="w-4 h-4 text-red-500" />,
-};
-
-const borders = {
-  warning: "border-l-amber-400",
-  info: "border-l-blue-300",
-  success: "border-l-emerald-400",
-  error: "border-l-red-400",
+const severityMeta: Record<Severity, { color: string; Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>; label: string }> = {
+  warning: { color: "#f59e0b", Icon: AlertTriangle, label: "Warning" },
+  info:    { color: "#00a6e0", Icon: Info,          label: "Info" },
+  success: { color: "#10b981", Icon: CheckCircle,   label: "Resolved" },
+  error:   { color: "#ef4444", Icon: XCircle,       label: "Error" },
 };
 
 export default function AlertsPage() {
-  const [alerts, setAlerts] = useState(allAlerts);
-  const [filter, setFilter] = useState<"all" | "unread">("all");
+  const [alerts, setAlerts] = useState<Alert[]>(initial);
+  const [filter, setFilter] = useState<"all" | "unread" | Severity>("all");
 
-  const ackAlert = (id: number) => setAlerts(a => a.map(x => x.id === id ? { ...x, ack: true } : x));
-  const clearAll = () => setAlerts(a => a.map(x => ({ ...x, ack: true })));
+  const unreadCount = alerts.filter((a) => !a.ack).length;
 
-  const displayed = filter === "unread" ? alerts.filter(a => !a.ack) : alerts;
-  const unreadCount = alerts.filter(a => !a.ack).length;
+  const ackAlert = (id: number) => setAlerts((a) => a.map((x) => (x.id === id ? { ...x, ack: true } : x)));
+  const clearAll = () => setAlerts((a) => a.map((x) => ({ ...x, ack: true })));
+
+  const displayed = alerts.filter((a) => {
+    if (filter === "all") return true;
+    if (filter === "unread") return !a.ack;
+    return a.severity === filter;
+  });
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-start justify-between">
+    <div className={styles.root}>
+      {/* Hero */}
+      <header>
+        <span className={styles.eye}>Monitoring · incidents & insights</span>
+        <h1 className={styles.title}>
+          What <em>needs</em> your eyes.
+        </h1>
+        <p className={styles.lead}>
+          System events, anomalies, and AI recommendations — triaged by severity, quieter than a pager.
+        </p>
+      </header>
+
+      {/* KPI strip */}
+      <div className={styles.sectionHead} style={{ marginTop: 44 }}>
+        <span className={styles.eye}>The mix · right now</span>
+      </div>
+      <div className={styles.statRow}>
+        <div className={styles.statCell}>
+          <div className={styles.statK}>Unread</div>
+          <div className={styles.statN}>
+            {unreadCount === 0 ? <em>0</em> : unreadCount}
+          </div>
+          <div className={`${styles.statTrend} ${unreadCount ? styles.statTrendWarn : styles.statTrendOk}`}>
+            {unreadCount ? "Needs review" : "Inbox zero"}
+          </div>
+        </div>
+        <div className={styles.statCell}>
+          <div className={styles.statK}>Warnings</div>
+          <div className={styles.statN}>{alerts.filter((a) => a.severity === "warning").length}</div>
+          <div className={styles.statTrend}>Thresholds crossed</div>
+        </div>
+        <div className={styles.statCell}>
+          <div className={styles.statK}>Errors</div>
+          <div className={styles.statN}>{alerts.filter((a) => a.severity === "error").length}</div>
+          <div className={styles.statTrend}>Hardware issues</div>
+        </div>
+        <div className={styles.statCell}>
+          <div className={styles.statK}>Resolved</div>
+          <div className={styles.statN}><em>{alerts.filter((a) => a.ack).length}</em></div>
+          <div className={`${styles.statTrend} ${styles.statTrendOk}`}>Acked / auto-fixed</div>
+        </div>
+      </div>
+
+      {/* Section head + clear all */}
+      <div
+        className={styles.sectionHead}
+        style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 20, flexWrap: "wrap" }}
+      >
         <div>
-          <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-[0.25em] text-[#00a6e0] mb-1">Monitoring</p>
-          <h1 className="text-3xl font-bold text-[#0a1628] font-[family-name:var(--font-inter-tight)]">Alerts</h1>
-          <p className="text-[#64748b] text-sm mt-1">System events, anomalies, and AI recommendations.</p>
+          <span className={styles.eye}>The feed · newest first</span>
+          <h2 className={styles.title} style={{ fontSize: "clamp(28px, 3.4vw, 42px)" }}>
+            Everything that <em>happened</em>.
+          </h2>
         </div>
         {unreadCount > 0 && (
-          <button onClick={clearAll} className="flex items-center gap-2 border border-[#e2e8f0] text-[#64748b] hover:text-[#0a1628] px-4 py-2.5 rounded-lg text-sm font-medium transition-colors">
+          <button className={styles.btnGhost} onClick={clearAll}>
             <BellOff className="w-4 h-4" />
-            Mark All Read
+            Mark all read
           </button>
         )}
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
-        {[
-          { label: "Unread", value: String(unreadCount), color: "text-[#00a6e0]" },
-          { label: "Warnings", value: String(alerts.filter(a => a.severity === "warning").length), color: "text-amber-500" },
-          { label: "Errors", value: String(alerts.filter(a => a.severity === "error").length), color: "text-red-500" },
-          { label: "Resolved", value: String(alerts.filter(a => a.ack).length), color: "text-emerald-500" },
-        ].map(({ label, value, color }) => (
-          <motion.div key={label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-            className="bg-white/75 backdrop-blur-sm rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
-            <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8] mb-2">{label}</p>
-            <p className={`text-2xl font-bold font-[family-name:var(--font-inter-tight)] ${color}`}>{value}</p>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Filter */}
-      <div className="flex gap-2">
-        {(["all", "unread"] as const).map(f => (
-          <button key={f} onClick={() => setFilter(f)}
-            className={`px-4 py-2 rounded-lg text-xs font-[family-name:var(--font-jetbrains-mono)] uppercase tracking-wider transition-all ${filter === f
-              ? "bg-[#00a6e0] text-white"
-              : "bg-white border border-[#e2e8f0] text-[#64748b] hover:border-[#00a6e0] hover:text-[#00a6e0]"
-              }`}>
-            {f === "all" ? "All Alerts" : `Unread (${unreadCount})`}
+      {/* Filter chips */}
+      <div className={styles.filterBar} style={{ marginTop: 14 }}>
+        <button className={`${styles.filterChip} ${filter === "all" ? styles.filterChipActive : ""}`} onClick={() => setFilter("all")}>
+          All
+        </button>
+        <button className={`${styles.filterChip} ${filter === "unread" ? styles.filterChipActive : ""}`} onClick={() => setFilter("unread")}>
+          Unread · {unreadCount}
+        </button>
+        {(["warning", "error", "success", "info"] as Severity[]).map((sev) => (
+          <button
+            key={sev}
+            className={`${styles.filterChip} ${filter === sev ? styles.filterChipActive : ""}`}
+            onClick={() => setFilter(sev)}
+            style={filter === sev ? { color: severityMeta[sev].color, borderColor: severityMeta[sev].color } : undefined}
+          >
+            {severityMeta[sev].label}
           </button>
         ))}
       </div>
 
       {/* Alert list */}
-      <div className="space-y-3">
-        {displayed.length === 0 ? (
-          <div className="bg-white/75 backdrop-blur-sm rounded-2xl border border-[#e2e8f0] p-12 text-center">
-            <Bell className="w-8 h-8 text-[#94a3b8] mx-auto mb-3" />
-            <p className="text-[#64748b] font-medium">No unread alerts</p>
-          </div>
-        ) : (
-          displayed.map((alert, i) => (
-            <motion.div key={alert.id} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
-              className={`bg-white/75 backdrop-blur-sm rounded-2xl border-[#e2e8f0] border border-l-4 ${borders[alert.severity as keyof typeof borders]} p-5 shadow-sm flex items-start justify-between gap-4 ${alert.ack ? "opacity-60" : ""}`}>
-              <div className="flex items-start gap-3">
-                <div className="mt-0.5">{icons[alert.severity as keyof typeof icons]}</div>
+      {displayed.length === 0 ? (
+        <div className={styles.empty}>
+          <Bell className="w-8 h-8" style={{ margin: "0 auto", display: "block" }} />
+          <p>Nothing in this filter. All clear.</p>
+        </div>
+      ) : (
+        <div className={styles.alertGroup}>
+          {displayed.map((a) => {
+            const meta = severityMeta[a.severity];
+            const Icon = meta.Icon;
+            return (
+              <div
+                key={a.id}
+                className={`${styles.alertItem} ${a.ack ? "ack" : ""}`}
+                style={{ ["--severity" as string]: meta.color }}
+              >
+                <span className={styles.alertIcon} style={{ background: `${meta.color}12`, borderColor: `${meta.color}40` }}>
+                  <Icon className="w-4 h-4" style={{ color: meta.color }} />
+                </span>
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <p className="font-medium text-[#0a1628] text-sm">{alert.title}</p>
-                    {!alert.ack && <span className="w-1.5 h-1.5 rounded-full bg-[#00a6e0]" />}
+                  <div
+                    className={styles.mono}
+                    style={{ fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: meta.color, marginBottom: 6 }}
+                  >
+                    {meta.label} · {a.source}
                   </div>
-                  <p className="text-xs text-[#64748b] leading-relaxed">{alert.message}</p>
-                  <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8] mt-2">{alert.time}</p>
+                  <h3 className={styles.alertTitle}>
+                    {a.title}
+                    {!a.ack && <span className={styles.unreadDot} />}
+                  </h3>
+                  <p className={styles.alertBody}>{a.message}</p>
+                  <div className={styles.alertMeta}>{a.time}</div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  {!a.ack ? (
+                    <button className={styles.btnGhost} onClick={() => ackAlert(a.id)}>
+                      Mark read
+                    </button>
+                  ) : (
+                    <span
+                      className={styles.mono}
+                      style={{ fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#94a3b8" }}
+                    >
+                      Acknowledged
+                    </span>
+                  )}
                 </div>
               </div>
-              {!alert.ack && (
-                <button onClick={() => ackAlert(alert.id)}
-                  className="shrink-0 text-xs font-[family-name:var(--font-jetbrains-mono)] uppercase tracking-wider text-[#64748b] hover:text-[#00a6e0] border border-[#e2e8f0] hover:border-[#00a6e0] px-3 py-1.5 rounded-lg transition-all whitespace-nowrap">
-                  Mark Read
-                </button>
-              )}
-            </motion.div>
-          ))
-        )}
-      </div>
+            );
+          })}
+        </div>
+      )}
+
+      <div style={{ height: 64 }} />
     </div>
   );
 }
