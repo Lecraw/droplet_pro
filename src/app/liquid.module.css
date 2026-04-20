@@ -45,7 +45,7 @@
 .btnG:hover { color: var(--ink); background: rgba(0, 0, 0, .04); }
 
 .brand {
-  position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+  position: fixed; top: 18px; left: 24px;
   z-index: 110; display: flex; align-items: center; gap: 9px;
   background: transparent;
 }
