@@ -1,12 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import {
-  LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
-import { Activity, Droplets, TrendingDown, AlertCircle, Zap, Thermometer, Target, Send, BotMessageSquare, Gauge } from "lucide-react";
+import styles from "./overview.module.css";
 
 const flowData = [
   { time: "00:00", flow: 4.2 }, { time: "02:00", flow: 3.9 },
@@ -25,435 +31,441 @@ const efficiencyData = [
   { day: "Sun", pue: 1.12 },
 ];
 
-const pressureData = [
-  { time: "00:00", pressure: 3.1 }, { time: "04:00", pressure: 3.0 },
-  { time: "08:00", pressure: 3.3 }, { time: "12:00", pressure: 3.5 },
-  { time: "16:00", pressure: 3.4 }, { time: "20:00", pressure: 3.2 },
-  { time: "24:00", pressure: 3.1 },
-];
-
-const temperatureByZone = [
-  { zone: "A", temp: 22.1 }, { zone: "B", temp: 28.5 },
-  { zone: "C", temp: 25.0 }, { zone: "D", temp: 21.8 },
-  { zone: "E", temp: 20.5 }, { zone: "F", temp: 18.2 },
-];
-
-const waterUsageWeekly = [
-  { day: "Mon", usage: 18200 }, { day: "Tue", usage: 17800 },
-  { day: "Wed", usage: 19100 }, { day: "Thu", usage: 18500 },
-  { day: "Fri", usage: 17200 }, { day: "Sat", usage: 14800 },
-  { day: "Sun", usage: 13900 },
+const zones = [
+  { id: "A", name: "Aisle A · Compute", flow: 4.2, temp: 22.1, pue: 1.11, status: "online" as const, trend: [0.5, 0.55, 0.52, 0.58, 0.6, 0.57, 0.6] },
+  { id: "B", name: "Aisle B · AI Cluster", flow: 1.2, temp: 28.5, pue: 1.21, status: "warn" as const,   trend: [0.8, 0.7, 0.65, 0.5, 0.4, 0.3, 0.25] },
+  { id: "C", name: "Aisle C · Storage", flow: 8.5, temp: 25.0, pue: 1.14, status: "online" as const, trend: [0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7] },
+  { id: "D", name: "Aisle D · Networking", flow: 2.1, temp: 21.8, pue: 1.09, status: "online" as const, trend: [0.55, 0.5, 0.52, 0.56, 0.54, 0.52, 0.5] },
+  { id: "E", name: "Aisle E · Cold Row", flow: 3.0, temp: 20.5, pue: 1.08, status: "online" as const, trend: [0.4, 0.42, 0.44, 0.46, 0.48, 0.5, 0.5] },
+  { id: "F", name: "Aisle F · Blowdown", flow: 0.0, temp: 18.2, pue: 0.00, status: "offline" as const, trend: [0.6, 0.5, 0.45, 0.3, 0.2, 0.1, 0.0] },
 ];
 
 const recentEvents = [
-  { time: "14:22", msg: "AI: Zone A flow reduced 0.3 L/s — thermal headroom detected", type: "ai" },
-  { time: "12:05", msg: "SN-9024 synced telemetry batch — 1,240 data points", type: "info" },
-  { time: "09:41", msg: "Warning: SN-9023 temperature elevated (28.5°C)", type: "warn" },
-  { time: "08:00", msg: "Daily system health check passed — all nodes nominal", type: "ok" },
-  { time: "03:15", msg: "AI: Water efficiency improved by 2.1% across Zone C", type: "ai" },
+  { time: "14:22", type: "ai" as const,   body: <><strong>Zone A flow reduced 0.3 L/s</strong> — thermal headroom detected, savings logged.</> },
+  { time: "12:05", type: "info" as const, body: <><strong>SN-9024 telemetry batch synced</strong> — 1,240 data points archived.</> },
+  { time: "09:41", type: "warn" as const, body: <><strong>SN-9023 temperature elevated</strong> (28.5°C). Expected flow restore at 15:00.</> },
+  { time: "08:00", type: "ok" as const,   body: <><strong>Daily system health check passed</strong> — all nodes nominal.</> },
+  { time: "03:15", type: "ai" as const,   body: <><strong>Micro cooling loop efficiency +2.1%</strong> across Zone C after valve tune.</> },
 ];
 
 const aiSuggestions = [
-  "How can I improve water flow in Zone B?",
-  "Which sensors need maintenance?",
-  "Show me water savings this month",
   "Why is Zone B temperature high?",
+  "How much water have we saved this month?",
+  "Which sensors need maintenance?",
+  "What's the projected savings for Q2?",
 ];
+
+/* Mini sparkline component (thin cyan line, no axes) */
+function Spark({ points, color = "#00a6e0" }: { points: number[]; color?: string }) {
+  const w = 72, h = 22;
+  const step = w / (points.length - 1);
+  const d = points
+    .map((v, i) => `${i === 0 ? "M" : "L"}${(i * step).toFixed(1)} ${(h - v * h + 2).toFixed(1)}`)
+    .join(" ");
+  return (
+    <svg className={styles.zSpark} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
+      <path d={d} fill="none" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/* Radial zone map — concentric rings, each showing zone efficiency arc */
+function RadialZoneMap() {
+  const size = 300;
+  const cx = size / 2, cy = size / 2;
+  const ringCount = zones.length;
+  const inner = 34, outer = 138;
+  const ringStep = (outer - inner) / ringCount;
+  const palette = [
+    "#00a6e0", "#f59e0b", "#51d8ff", "#10b981", "#7cc3e8", "#94a3b8",
+  ];
+  return (
+    <svg className={styles.radialSvg} viewBox={`0 0 ${size} ${size}`}>
+      <defs>
+        <radialGradient id="ringCenter" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#e6f5ff" stopOpacity="0.95" />
+          <stop offset="60%" stopColor="#b2dff5" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#5aade0" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <circle cx={cx} cy={cy} r={inner - 6} fill="url(#ringCenter)" />
+      <circle cx={cx} cy={cy} r={inner - 6} fill="none" stroke="#1a6ea8" strokeOpacity="0.2" strokeWidth="0.8" />
+
+      {zones.map((z, i) => {
+        const r = inner + (i + 0.5) * ringStep;
+        const efficiency = z.status === "offline" ? 0 : Math.max(0, Math.min(1, (2 - z.pue) / 0.92));
+        const arc = efficiency * 2 * Math.PI * 0.82; // leave a gap
+        const start = -Math.PI / 2;
+        const end = start + arc;
+        const sx = cx + r * Math.cos(start);
+        const sy = cy + r * Math.sin(start);
+        const ex = cx + r * Math.cos(end);
+        const ey = cy + r * Math.sin(end);
+        const large = arc > Math.PI ? 1 : 0;
+        const color = palette[i % palette.length];
+        return (
+          <g key={z.id}>
+            {/* faint full ring */}
+            <circle cx={cx} cy={cy} r={r} fill="none" stroke="#e2e8f0" strokeWidth="1" />
+            {/* efficiency arc */}
+            {efficiency > 0 && (
+              <path
+                d={`M ${sx.toFixed(2)} ${sy.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${ex.toFixed(2)} ${ey.toFixed(2)}`}
+                fill="none"
+                stroke={color}
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+            )}
+            {/* zone label dot */}
+            <circle cx={ex} cy={ey} r="3" fill={color} />
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+/* Semi-circle dial gauge */
+function Dial({ value, max, color = "#00a6e0" }: { value: number; max: number; color?: string }) {
+  const pct = Math.max(0, Math.min(1, value / max));
+  const r = 38;
+  const cx = 46, cy = 46;
+  const start = Math.PI;
+  const end = start + pct * Math.PI;
+  const sx = cx + r * Math.cos(start), sy = cy + r * Math.sin(start);
+  const ex = cx + r * Math.cos(end), ey = cy + r * Math.sin(end);
+  return (
+    <svg className={styles.dialSvg} viewBox="0 0 92 56">
+      <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`} fill="none" stroke="#e2e8f0" strokeWidth="3" strokeLinecap="round" />
+      <path d={`M ${sx} ${sy} A ${r} ${r} 0 0 1 ${ex} ${ey}`} fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" />
+      <circle cx={ex} cy={ey} r="3" fill="#fff" stroke={color} strokeWidth="1.5" />
+    </svg>
+  );
+}
 
 export default function DashboardOverview() {
   const [aiQuery, setAiQuery] = useState("");
-  const [aiMessages, setAiMessages] = useState<{ role: "user" | "ai"; text: string }[]>([]);
+  const [response, setResponse] = useState<{ q: string; a: string } | null>(null);
   const [isThinking, setIsThinking] = useState(false);
 
   const handleAiSubmit = () => {
-    if (!aiQuery.trim()) return;
-    const question = aiQuery;
-    setAiMessages((prev) => [...prev, { role: "user", text: question }]);
+    if (!aiQuery.trim() || isThinking) return;
+    const question = aiQuery.trim();
     setAiQuery("");
     setIsThinking(true);
-
+    setResponse({ q: question, a: "" });
     setTimeout(() => {
       const responses: Record<string, string> = {
-        "flow": "Based on current telemetry, Zone B has a flow rate of 1.2 L/s — well below the 4.0 L/s baseline. I recommend checking SN-9023 and SN-9029 for possible blockages or valve restrictions. Increasing the flow rate by 2.0 L/s could improve thermal dissipation by 18%.",
-        "maintenance": "Two sensors are flagged: SN-9023 (Zone B Return) is showing elevated temperatures at 28.5°C, and SN-9029 (Zone B Distribution Header) has low flow at 0.8 L/s. SN-9034 (Zone F Blowdown Valve) is offline and needs physical inspection. I recommend scheduling maintenance for all three within the next 48 hours.",
-        "savings": "This month you've saved 128,000 gallons compared to your pre-Droplet baseline — a 34% reduction. At current rates, you're on track for 400,000 gallons saved by end of month. Zone C (AI Cluster) contributed the most savings through dynamic flow optimization.",
-        "temperature": "Zone B temperature is elevated at 28.5°C due to reduced flow rate (1.2 L/s vs. 4.0 L/s baseline). The distribution header sensor SN-9029 shows only 0.8 L/s throughput, suggesting a potential valve issue. Restoring normal flow should bring temperatures back within the 20-25°C target range.",
+        flow: "Zone B is flowing 1.2 L/s versus the 4.0 L/s baseline — a 70% drop. SN-9023 and SN-9029 are the likely culprits; restoring them would add ~18% thermal headroom across the aisle.",
+        maintenance: "Three sensors need attention this week: SN-9023 (elevated temperature, Zone B), SN-9029 (low flow, Zone B distribution), and SN-9034 (offline, Zone F blowdown valve). Schedule within 48 hours to protect PUE.",
+        savings: "You've saved 128,000 gallons this month — a 34% reduction versus the pre-Droplet baseline. Extrapolated, that puts you on track for ~400,000 gal by month-end. Zone C contributed the most.",
+        temperature: "Zone B is running at 28.5°C because SN-9029 is only delivering 0.8 L/s. Restoring the distribution valve will push temperatures back into the 20–25°C band; no other zones are flagged.",
+        q2:        "Projected Q2 savings, assuming current flow trajectories and a single Zone B valve fix: 1.21M gallons. That's $14,200 in water-and-sewer avoided, plus a 4.2% PUE improvement over Q1.",
       };
-
       const key = Object.keys(responses).find((k) => question.toLowerCase().includes(k));
       const answer = key
         ? responses[key]
-        : "Based on your sensor data, I can see all 16 nodes are reporting telemetry across 6 zones. Current system efficiency is at 94% with a PUE of 1.12. I'd recommend focusing on Zone B where flow rates are below baseline — optimizing this zone alone could save an additional 4,200 gallons per week.";
-
-      setAiMessages((prev) => [...prev, { role: "ai", text: answer }]);
+        : "All 16 nodes are reporting. System efficiency sits at 94%, PUE at 1.12. The highest-leverage action right now is restoring Zone B flow — worth roughly 4,200 gal/week on its own.";
+      setResponse({ q: question, a: answer });
       setIsThinking(false);
-    }, 1500);
+    }, 1100);
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-2">
-        <div>
-          <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-[0.25em] text-[#00a6e0] mb-1">Live View</p>
-          <h1 className="text-3xl font-bold text-[#0a1628] font-[family-name:var(--font-inter-tight)]">Overview</h1>
-          <p className="text-[#64748b] text-sm">System performance across all deployment zones.</p>
+    <div className={styles.root}>
+      {/* ─── Hero ─── */}
+      <header>
+        <span className={styles.eye}>Live · all 16 nodes reporting</span>
+        <h1 className={styles.title}>
+          System at a <em>glance</em>.
+        </h1>
+        <p className={styles.lead}>
+          Real-time telemetry across six aisles. Flow, temperature, and pressure sampled every 200ms,
+          analyzed on-device, surfaced here.
+        </p>
+      </header>
+
+      {/* ─── Hairline stat strip ─── */}
+      <div className={styles.sectionHead} style={{ marginTop: 44 }}>
+        <span className={styles.eye}>Right now</span>
+      </div>
+      <div className={styles.statRow}>
+        <div className={styles.statCell}>
+          <div className={styles.statK}>Active nodes</div>
+          <div className={styles.statN}>16<span>/ 18</span></div>
+          <div className={`${styles.statTrend} ${styles.statTrendOk}`}>+4 this week</div>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1.5 text-xs font-[family-name:var(--font-jetbrains-mono)] text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-lg">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            Live
+        <div className={styles.statCell}>
+          <div className={styles.statK}>Water saved · MTD</div>
+          <div className={styles.statN}>128<span>K gal</span></div>
+          <div className={`${styles.statTrend} ${styles.statTrendOk}`}>On track for 400K</div>
+        </div>
+        <div className={styles.statCell}>
+          <div className={styles.statK}>Flow · total</div>
+          <div className={styles.statN}><em>4.2</em><span>L/s</span></div>
+          <div className={`${styles.statTrend} ${styles.statTrendOk}`}>−12% vs baseline</div>
+        </div>
+        <div className={styles.statCell}>
+          <div className={styles.statK}>Current PUE</div>
+          <div className={styles.statN}>1.12</div>
+          <div className={`${styles.statTrend} ${styles.statTrendWarn}`}>Target 1.10</div>
+        </div>
+      </div>
+
+      {/* ─── Hero flow chart ─── */}
+      <div className={styles.sectionHead}>
+        <span className={styles.eye}>Live telemetry · 24 hours</span>
+        <h2 className={styles.title} style={{ fontSize: "clamp(28px, 3.4vw, 42px)" }}>
+          Flow is <em>steady</em>.
+        </h2>
+      </div>
+      <div className={styles.chartPanel}>
+        <div className={styles.chartHead}>
+          <span className={styles.eye} style={{ marginBottom: 0 }}>Flow rate · all zones</span>
+          <span className={styles.chartVal}>
+            4.2<em>L/s current</em>
           </span>
-          <button className="bg-white/75 backdrop-blur-sm border border-[#e2e8f0] px-4 py-2 rounded-full text-xs font-[family-name:var(--font-jetbrains-mono)] uppercase tracking-wider hover:bg-white transition-colors text-[#64748b]">
-            Export Report
-          </button>
+        </div>
+        <div style={{ height: 220 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={flowData} margin={{ top: 4, left: -10, right: 4, bottom: 0 }}>
+              <defs>
+                <linearGradient id="flowArea" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#51d8ff" stopOpacity="0.45" />
+                  <stop offset="100%" stopColor="#51d8ff" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+              <XAxis dataKey="time" tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} interval={2} />
+              <YAxis domain={[3, 6]} tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+              <Tooltip
+                contentStyle={{
+                  borderRadius: 10,
+                  background: "rgba(255,255,255,0.95)",
+                  border: "1px solid #e2e8f0",
+                  fontSize: 12,
+                  color: "#0a1628",
+                  boxShadow: "0 10px 30px rgba(0,90,170,0.1)",
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="flow"
+                stroke="#00a6e0"
+                strokeWidth={1.6}
+                fill="url(#flowArea)"
+                dot={false}
+                activeDot={{ r: 4, fill: "#00a6e0", stroke: "#fff", strokeWidth: 2 }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl bg-white/75 backdrop-blur-sm border border-[#e2e8f0] p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Activity className="w-4 h-4 text-[#00a6e0]" />
-            <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8]">Active Nodes</p>
-          </div>
-          <p className="text-3xl font-bold text-[#0a1628] font-[family-name:var(--font-inter-tight)]">16</p>
-          <p className="text-[10px] mt-1 font-[family-name:var(--font-jetbrains-mono)] text-emerald-500">+4 this week</p>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.03 }}
-          className="rounded-2xl bg-white/75 backdrop-blur-sm border border-[#e2e8f0] p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <TrendingDown className="w-4 h-4 text-[#00a6e0]" />
-            <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8]">Water Saved (MTD)</p>
-          </div>
-          <p className="text-3xl font-bold text-[#0a1628] font-[family-name:var(--font-inter-tight)]">128K<span className="text-sm font-normal text-[#94a3b8] ml-1">gal</span></p>
-          <p className="text-[10px] mt-1 font-[family-name:var(--font-jetbrains-mono)] text-emerald-500">On track for 400K</p>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}
-          className="rounded-2xl bg-white/75 backdrop-blur-sm border border-[#e2e8f0] p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Zap className="w-4 h-4 text-[#00a6e0]" />
-            <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8]">Current PUE</p>
-          </div>
-          <p className="text-3xl font-bold text-[#0a1628] font-[family-name:var(--font-inter-tight)]">1.12</p>
-          <p className="text-[10px] mt-1 font-[family-name:var(--font-jetbrains-mono)] text-emerald-500">Target: 1.10</p>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.09 }}
-          className="rounded-2xl bg-white/75 backdrop-blur-sm border border-[#e2e8f0] p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Target className="w-4 h-4 text-[#00a6e0]" />
-            <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8]">AI Efficiency</p>
-          </div>
-          <p className="text-3xl font-bold text-[#0a1628] font-[family-name:var(--font-inter-tight)]">94<span className="text-sm font-normal text-[#94a3b8] ml-1">%</span></p>
-          <p className="text-[10px] mt-1 font-[family-name:var(--font-jetbrains-mono)] text-[#00a6e0]">+6% this month</p>
-        </motion.div>
+      {/* ─── Zone map + legend (radial) ─── */}
+      <div className={styles.sectionHead}>
+        <span className={styles.eye}>Zones · cooling at work</span>
+        <h2 className={styles.title} style={{ fontSize: "clamp(28px, 3.4vw, 42px)" }}>
+          Six aisles, <em>right-sized</em>.
+        </h2>
       </div>
-
-      {/* ── Secondary stats — minimal inline strip (no boxes) ── */}
-      <div className="flex items-center divide-x divide-[#e2e8f0] bg-white/60 backdrop-blur-sm rounded-xl px-2 py-3">
-        {[
-          { label: "Flow Rate", value: "4.2", unit: "L/s", icon: <Droplets className="w-3.5 h-3.5 text-[#00a6e0]" />, trend: "-12% vs baseline", up: true },
-          { label: "Alerts", value: "3", unit: "", icon: <AlertCircle className="w-3.5 h-3.5 text-amber-400" />, trend: "2 warn, 1 offline", up: false },
-          { label: "Avg Temp", value: "23.8", unit: "°C", icon: <Thermometer className="w-3.5 h-3.5 text-[#00a6e0]" />, trend: "-0.5°C vs yesterday", up: true },
-          { label: "Pressure", value: "3.2", unit: "bar", icon: <Gauge className="w-3.5 h-3.5 text-[#94a3b8]" />, trend: "Normal range", up: true },
-        ].map(({ label, value, unit, icon, trend, up }) => (
-          <div key={label} className="flex items-center gap-3 px-5 flex-1">
-            {icon}
-            <div>
-              <p className="text-sm font-bold text-[#0a1628] font-[family-name:var(--font-inter-tight)]">
-                {value}<span className="text-xs font-normal text-[#94a3b8] ml-0.5">{unit}</span>
-              </p>
-              <p className="font-[family-name:var(--font-jetbrains-mono)] text-[8px] uppercase tracking-widest text-[#94a3b8]">{label}</p>
-            </div>
-            <p className={`text-[9px] font-[family-name:var(--font-jetbrains-mono)] ml-auto hidden xl:block ${up ? "text-emerald-500" : "text-amber-500"}`}>{trend}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* ── Charts Row 1 — main flow (borderless) + PUE (bordered) ── */}
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Main flow chart — no border, just content with a blue top accent */}
-        <div className="lg:col-span-2 relative">
-          <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#00a6e0] to-[#06B6D4] rounded-full" />
-          <div className="pt-5">
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8] mb-0.5">Live Telemetry</p>
-                <h2 className="text-base font-bold text-[#0a1628]">24-Hour Flow Rate</h2>
-              </div>
-              <div className="text-right">
-                <p className="text-2xl font-bold text-[#00a6e0] font-[family-name:var(--font-inter-tight)]">4.2</p>
-                <p className="text-[9px] font-[family-name:var(--font-jetbrains-mono)] uppercase tracking-widest text-[#94a3b8]">L/s current</p>
-              </div>
-            </div>
-            <div className="h-56">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={flowData} margin={{ left: -15, right: 0 }}>
-                  <defs>
-                    <linearGradient id="flowGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#00a6e0" stopOpacity={0.12} />
-                      <stop offset="95%" stopColor="#00a6e0" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                  <XAxis dataKey="time" tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} interval={2} />
-                  <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} domain={[3, 6]} />
-                  <Tooltip contentStyle={{ borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: 12 }} />
-                  <Area type="monotone" dataKey="flow" stroke="#00a6e0" strokeWidth={2} fill="url(#flowGrad)" dot={false} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white/75 backdrop-blur-sm border border-[#e2e8f0] p-6 rounded-2xl">
-          <div className="mb-6">
-            <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8] mb-0.5">This Week</p>
-            <h2 className="text-base font-bold text-[#0a1628]">PUE Trend</h2>
-          </div>
-          <div className="h-56">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={efficiencyData} margin={{ left: -15, right: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                <XAxis dataKey="day" tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
-                <YAxis domain={[1.08, 1.18]} tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={{ borderRadius: "8px", background: "#fff", border: "1px solid #e2e8f0", fontSize: 12, color: "#0a1628" }} />
-                <Line type="monotone" dataKey="pue" stroke="#00a6e0" strokeWidth={2.5} dot={{ r: 4, fill: "#00a6e0", stroke: "#fff", strokeWidth: 2 }} activeDot={{ r: 5 }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Charts Row 2 — varied styles ── */}
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Pressure — white card with border */}
-        <div className="bg-white/75 backdrop-blur-sm p-6 rounded-2xl border border-[#e2e8f0] shadow-sm">
-          <div className="mb-6">
-            <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8] mb-0.5">24-Hour</p>
-            <h2 className="text-base font-bold text-[#0a1628]">Pressure Trend</h2>
-          </div>
-          <div className="h-48">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={pressureData} margin={{ left: -15, right: 0 }}>
-                <defs>
-                  <linearGradient id="pressureGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.12} />
-                    <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                <XAxis dataKey="time" tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
-                <YAxis domain={[2.5, 4]} tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={{ borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: 12 }} />
-                <Area type="monotone" dataKey="pressure" stroke="#8B5CF6" strokeWidth={2} fill="url(#pressureGrad)" dot={false} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Temperature by zone — inline horizontal bars (no chart wrapper) */}
-        <div className="p-6">
-          <div className="mb-5">
-            <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8] mb-0.5">Current</p>
-            <h2 className="text-base font-bold text-[#0a1628]">Temperature by Zone</h2>
-          </div>
-          <div className="space-y-3">
-            {temperatureByZone.map(({ zone, temp }) => {
-              const pct = (temp / 35) * 100;
-              const hot = temp > 26;
-              return (
-                <div key={zone} className="flex items-center gap-3">
-                  <span className="font-[family-name:var(--font-jetbrains-mono)] text-[10px] text-[#94a3b8] w-8 uppercase tracking-wider">Zone {zone}</span>
-                  <div className="flex-1 h-2.5 bg-[#e2e8f0] rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${pct}%` }}
-                      transition={{ duration: 0.8, delay: 0.1 }}
-                      className={`h-full rounded-full ${hot ? "bg-gradient-to-r from-amber-400 to-red-400" : "bg-gradient-to-r from-[#00a6e0] to-[#06B6D4]"}`}
-                    />
-                  </div>
-                  <span className={`font-[family-name:var(--font-jetbrains-mono)] text-xs font-bold w-12 text-right ${hot ? "text-amber-500" : "text-[#0a1628]"}`}>{temp}°C</span>
-                </div>
-              );
-            })}
-          </div>
-          <div className="mt-4 pt-3 border-t border-[#e2e8f0]">
-            <p className="text-[10px] font-[family-name:var(--font-jetbrains-mono)] text-[#94a3b8] uppercase tracking-wider">Target range: 18–25°C</p>
-          </div>
-        </div>
-
-        {/* Water usage — subtle bg, no border */}
-        <div className="bg-[rgba(250,252,255,0.7)] p-6 rounded-2xl">
-          <div className="mb-6">
-            <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8] mb-0.5">This Week</p>
-            <h2 className="text-base font-bold text-[#0a1628]">Water Usage</h2>
-          </div>
-          <div className="h-48">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={waterUsageWeekly} margin={{ left: -5, right: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                <XAxis dataKey="day" tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={{ borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: 12 }} />
-                <Bar dataKey="usage" fill="#10B981" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Zone Status — open layout with progress rings ── */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8] mb-0.5">Infrastructure</p>
-            <h2 className="text-base font-bold text-[#0a1628]">Zone Status</h2>
-          </div>
-          <span className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8]">6 active zones</span>
-        </div>
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
-          {[
-            { zone: "Zone A", flow: 4.2, temp: 22.1, status: "Online", eff: 92 },
-            { zone: "Zone B", flow: 1.2, temp: 28.5, status: "Warning", eff: 71 },
-            { zone: "Zone C", flow: 8.5, temp: 25.0, status: "Online", eff: 95 },
-            { zone: "Zone D", flow: 2.1, temp: 21.8, status: "Online", eff: 97 },
-            { zone: "Zone E", flow: 3.4, temp: 20.5, status: "Online", eff: 93 },
-            { zone: "Zone F", flow: 1.5, temp: 18.2, status: "Online", eff: 89 },
-          ].map(({ zone, flow, temp, status, eff }) => {
-            const warn = status === "Warning";
+      <div className={styles.radialWrap}>
+        <RadialZoneMap />
+        <div className={styles.radialLegend}>
+          {zones.map((z, i) => {
+            const color = ["#00a6e0", "#f59e0b", "#51d8ff", "#10b981", "#7cc3e8", "#94a3b8"][i % 6];
             return (
-              <motion.div key={zone} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                className={`relative p-4 rounded-xl text-center ${warn ? "bg-amber-50 ring-1 ring-amber-200" : "bg-white/75 backdrop-blur-sm border border-[#e2e8f0]"}`}>
-                {/* Efficiency ring */}
-                <div className="mx-auto w-14 h-14 mb-3 relative">
-                  <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e2e8f0" strokeWidth="3" />
-                    <circle cx="18" cy="18" r="15.9" fill="none"
-                      stroke={warn ? "#F59E0B" : "#10B981"} strokeWidth="3"
-                      strokeDasharray={`${eff} ${100 - eff}`} strokeLinecap="round" />
-                  </svg>
-                  <span className={`absolute inset-0 flex items-center justify-center text-xs font-bold ${warn ? "text-amber-600" : "text-emerald-600"}`}>{eff}%</span>
-                </div>
-                <p className="text-sm font-bold text-[#0a1628] mb-1">{zone}</p>
-                <div className="flex items-center justify-center gap-1.5 mb-2">
-                  <span className={`w-1.5 h-1.5 rounded-full ${warn ? "bg-amber-400" : "bg-emerald-500"}`} />
-                  <span className={`text-[9px] font-[family-name:var(--font-jetbrains-mono)] uppercase tracking-wider ${warn ? "text-amber-600" : "text-emerald-600"}`}>{status}</span>
-                </div>
-                <div className="flex justify-center gap-3 text-[10px] font-[family-name:var(--font-jetbrains-mono)] text-[#94a3b8]">
-                  <span>{flow} L/s</span>
-                  <span>{temp}°C</span>
-                </div>
-              </motion.div>
+              <div key={z.id} className={styles.radialLegendRow}>
+                <span className={styles.dot} style={{ background: color }} />
+                <span className={styles.name}>{z.name}</span>
+                <span className={styles.val}>{z.status === "offline" ? "—" : z.pue.toFixed(2)}</span>
+                <span className={styles.unit}>PUE</span>
+              </div>
             );
           })}
         </div>
       </div>
 
-      {/* ── Recent Events — timeline style with left accent ── */}
-      <div className="grid lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-2">
-          <div className="mb-4">
-            <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8] mb-0.5">Activity Feed</p>
-            <h2 className="text-base font-bold text-[#0a1628]">Recent Events</h2>
-          </div>
-          <div className="relative pl-4">
-            {/* Vertical timeline line */}
-            <div className="absolute left-[5px] top-2 bottom-2 w-px bg-gradient-to-b from-[#00a6e0] via-[#e2e8f0] to-transparent" />
-            <div className="space-y-1">
-              {recentEvents.map(({ time, msg, type }, i) => (
-                <div key={i} className="relative flex items-start gap-3 py-2.5">
-                  {/* Dot on timeline */}
-                  <span className={`absolute -left-4 top-3.5 w-2.5 h-2.5 rounded-full ring-2 ring-white ${
-                    type === "ai" ? "bg-[#00a6e0]" : type === "warn" ? "bg-amber-400" : type === "ok" ? "bg-emerald-400" : "bg-[#CBD5E1]"
+      {/* ─── Zones table ─── */}
+      <div className={styles.sectionHead} style={{ marginTop: 44 }}>
+        <span className={styles.eye}>By zone</span>
+      </div>
+      <table className={styles.zonesTable}>
+        <thead>
+          <tr>
+            <th style={{ width: "28%" }}>Zone</th>
+            <th>Flow</th>
+            <th>Temp</th>
+            <th>PUE</th>
+            <th>7-day flow</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {zones.map((z) => {
+            const sparkColor =
+              z.status === "offline" ? "#94a3b8" : z.status === "warn" ? "#f59e0b" : "#00a6e0";
+            return (
+              <tr key={z.id}>
+                <td className={styles.zName}>{z.name}</td>
+                <td className={styles.zNum}>{z.flow.toFixed(1)} L/s</td>
+                <td className={styles.zNum}>{z.temp.toFixed(1)}°C</td>
+                <td className={styles.zNum}>{z.status === "offline" ? "—" : z.pue.toFixed(2)}</td>
+                <td><Spark points={z.trend} color={sparkColor} /></td>
+                <td>
+                  <span className={`${styles.statusDot} ${
+                    z.status === "online" ? styles.statusOnline
+                    : z.status === "warn" ? styles.statusWarn
+                    : styles.statusOffline
                   }`} />
-                  <div className="flex-1 min-w-0 ml-2">
-                    <p className="text-xs text-[#0a1628] leading-relaxed">{msg}</p>
-                  </div>
-                  <span className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] text-[#94a3b8] shrink-0 pt-0.5">{time}</span>
-                </div>
-              ))}
-            </div>
+                  <span className={styles.mono} style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "#64748b" }}>
+                    {z.status}
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+      {/* ─── PUE Trend + Dials row ─── */}
+      <div className={styles.sectionHead}>
+        <span className={styles.eye}>Efficiency · this week</span>
+        <h2 className={styles.title} style={{ fontSize: "clamp(28px, 3.4vw, 42px)" }}>
+          PUE is <em>holding</em>.
+        </h2>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 28, alignItems: "stretch" }}>
+        <div className={styles.chartPanel}>
+          <div className={styles.chartHead}>
+            <span className={styles.eye} style={{ marginBottom: 0 }}>PUE · 7-day</span>
+            <span className={styles.chartVal}><em style={{ fontStyle: "italic", color: "#00a6e0" }}>1.12</em></span>
+          </div>
+          <div style={{ height: 180 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={efficiencyData} margin={{ top: 4, left: -10, right: 4, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                <XAxis dataKey="day" tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+                <YAxis domain={[1.08, 1.18]} tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: 10,
+                    background: "rgba(255,255,255,0.95)",
+                    border: "1px solid #e2e8f0",
+                    fontSize: 12,
+                    color: "#0a1628",
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="pue"
+                  stroke="#00a6e0"
+                  strokeWidth={1.8}
+                  dot={{ r: 3.5, fill: "#fff", stroke: "#00a6e0", strokeWidth: 1.6 }}
+                  activeDot={{ r: 5, fill: "#00a6e0", stroke: "#fff", strokeWidth: 2 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="lg:col-span-3 bg-white/75 backdrop-blur-sm border border-[#e2e8f0] rounded-2xl p-6">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="p-2 bg-[#00a6e0]/10 rounded-lg">
-              <BotMessageSquare className="w-5 h-5 text-[#00a6e0]" />
-            </div>
+        <div className={styles.chartPanel} style={{ display: "flex", flexDirection: "column", gap: 22, justifyContent: "center" }}>
+          <div className={styles.dialWrap}>
+            <Dial value={3.2} max={5} color="#00a6e0" />
             <div>
-              <h2 className="text-base font-bold text-[#0a1628]">Ask Droplet AI</h2>
-              <p className="text-xs text-[#64748b]">Get insights and recommendations from your sensor data</p>
+              <div className={styles.dialVal}>3.2<span>bar</span></div>
+              <div className={styles.dialLbl}>Avg pressure</div>
             </div>
           </div>
-
-          {/* Suggestion pills */}
-          {aiMessages.length === 0 && (
-            <div className="flex flex-wrap gap-2 mb-5">
-              {aiSuggestions.map((suggestion) => (
-                <button
-                  key={suggestion}
-                  onClick={() => setAiQuery(suggestion)}
-                  className="text-xs px-3 py-1.5 rounded-full border border-[#e2e8f0] text-[#64748b] hover:border-[#00a6e0]/50 hover:text-[#00a6e0] hover:bg-[#00a6e0]/10 transition-all font-[family-name:var(--font-jetbrains-mono)] cursor-pointer"
-                >
-                  {suggestion}
-                </button>
-              ))}
+          <hr className={styles.divider} />
+          <div className={styles.dialWrap}>
+            <Dial value={23.8} max={40} color="#f59e0b" />
+            <div>
+              <div className={styles.dialVal}>23.8<span>°C</span></div>
+              <div className={styles.dialLbl}>Avg temp</div>
             </div>
-          )}
-
-          {/* Chat messages */}
-          {aiMessages.length > 0 && (
-            <div className="space-y-4 mb-5 max-h-64 overflow-y-auto pr-2">
-              {aiMessages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                    msg.role === "user"
-                      ? "bg-[#00a6e0] text-white rounded-br-md"
-                      : "bg-white/80 border border-[#e2e8f0] text-[#0a1628] rounded-bl-md"
-                  }`}>
-                    {msg.text}
-                  </div>
-                </div>
-              ))}
-              {isThinking && (
-                <div className="flex justify-start">
-                  <div className="bg-white/80 border border-[#e2e8f0] px-4 py-3 rounded-2xl rounded-bl-md">
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#00a6e0] animate-bounce" />
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#00a6e0] animate-bounce [animation-delay:0.15s]" />
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#00a6e0] animate-bounce [animation-delay:0.3s]" />
-                    </div>
-                  </div>
-                </div>
-              )}
+          </div>
+          <hr className={styles.divider} />
+          <div className={styles.dialWrap}>
+            <Dial value={94} max={100} color="#10b981" />
+            <div>
+              <div className={styles.dialVal}>94<span>%</span></div>
+              <div className={styles.dialLbl}>AI efficiency</div>
             </div>
-          )}
-
-          {/* Input */}
-          <div className="flex items-center gap-3">
-            <input
-              type="text"
-              value={aiQuery}
-              onChange={(e) => setAiQuery(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleAiSubmit()}
-              placeholder="Ask about your water system..."
-              className="flex-1 px-4 py-3 rounded-xl bg-white/80 border border-[#e2e8f0] text-sm text-[#0a1628] placeholder-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#00a6e0]/30 focus:border-[#00a6e0]/50 transition-all"
-            />
-            <button
-              onClick={handleAiSubmit}
-              disabled={!aiQuery.trim()}
-              className="p-3 bg-[#00a6e0] text-white rounded-xl hover:bg-[#0088b8] transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm cursor-pointer"
-            >
-              <Send className="w-4 h-4" />
-            </button>
           </div>
         </div>
       </div>
+
+      {/* ─── Activity timeline ─── */}
+      <div className={styles.sectionHead}>
+        <span className={styles.eye}>Activity</span>
+        <h2 className={styles.title} style={{ fontSize: "clamp(28px, 3.4vw, 42px)" }}>
+          What <em>just</em> happened.
+        </h2>
+      </div>
+      <div className={styles.timeline}>
+        {recentEvents.map((e, i) => (
+          <div
+            key={i}
+            className={`${styles.timelineItem} ${
+              e.type === "warn" ? styles.typeWarn : e.type === "ok" ? styles.typeOk : e.type === "info" ? styles.typeInfo : ""
+            }`}
+          >
+            <span className={styles.timelineTime}>{e.time}</span>
+            <span className={styles.timelineBody}>{e.body}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* ─── Ask Droplet AI ─── */}
+      <div className={styles.sectionHead}>
+        <span className={styles.eye}>Ask Droplet AI</span>
+        <h2 className={styles.title} style={{ fontSize: "clamp(28px, 3.4vw, 42px)" }}>
+          Ask <em>anything</em>.
+        </h2>
+      </div>
+      <div className={styles.askRow}>
+        <span className={styles.askLabel}>Query</span>
+        <input
+          type="text"
+          className={styles.askInput}
+          value={aiQuery}
+          onChange={(e) => setAiQuery(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleAiSubmit()}
+          placeholder="Why is Zone B temperature high?"
+        />
+        <button
+          className={styles.askSubmit}
+          onClick={handleAiSubmit}
+          disabled={!aiQuery.trim() || isThinking}
+        >
+          Ask →
+        </button>
+      </div>
+      <div className={styles.suggestionRow}>
+        {aiSuggestions.map((s) => (
+          <button key={s} className={styles.suggestion} onClick={() => { setAiQuery(s); }}>
+            {s}
+          </button>
+        ))}
+      </div>
+
+      {response && (
+        <div className={styles.response}>
+          <span className={styles.q}>You asked</span>
+          <div>
+            <p className={styles.user} style={{ margin: 0 }}>{response.q}</p>
+            <p className={styles.a} style={{ marginTop: 14 }}>
+              {isThinking ? (
+                <span className={styles.thinking}><span /><span /><span /></span>
+              ) : response.a}
+            </p>
+          </div>
+        </div>
+      )}
+
+      <div style={{ height: 64 }} />
     </div>
   );
 }
