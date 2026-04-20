@@ -110,13 +110,11 @@ export default function DashboardOverview() {
         </div>
       </div>
 
-      {/* ── Hero stats — 2 large accent-bar cards + 2 dark cards ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Accent-bar style */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-          className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#EFF6FF] to-white p-5 border-l-4 border-[#00a6e0]">
+          className="rounded-2xl bg-white/75 backdrop-blur-sm border border-[#e2e8f0] p-5">
           <div className="flex items-center gap-2 mb-3">
-            <Activity className="w-4 h-4 text-emerald-500" />
+            <Activity className="w-4 h-4 text-[#00a6e0]" />
             <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8]">Active Nodes</p>
           </div>
           <p className="text-3xl font-bold text-[#0a1628] font-[family-name:var(--font-inter-tight)]">16</p>
@@ -124,33 +122,32 @@ export default function DashboardOverview() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.03 }}
-          className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#ECFDF5] to-white p-5 border-l-4 border-emerald-500">
+          className="rounded-2xl bg-white/75 backdrop-blur-sm border border-[#e2e8f0] p-5">
           <div className="flex items-center gap-2 mb-3">
-            <TrendingDown className="w-4 h-4 text-blue-500" />
+            <TrendingDown className="w-4 h-4 text-[#00a6e0]" />
             <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8]">Water Saved (MTD)</p>
           </div>
           <p className="text-3xl font-bold text-[#0a1628] font-[family-name:var(--font-inter-tight)]">128K<span className="text-sm font-normal text-[#94a3b8] ml-1">gal</span></p>
           <p className="text-[10px] mt-1 font-[family-name:var(--font-jetbrains-mono)] text-emerald-500">On track for 400K</p>
         </motion.div>
 
-        {/* Dark style */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}
-          className="rounded-2xl bg-[#0a1628] p-5 text-white">
+          className="rounded-2xl bg-white/75 backdrop-blur-sm border border-[#e2e8f0] p-5">
           <div className="flex items-center gap-2 mb-3">
-            <Zap className="w-4 h-4 text-emerald-400" />
-            <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#64748b]">Current PUE</p>
+            <Zap className="w-4 h-4 text-[#00a6e0]" />
+            <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8]">Current PUE</p>
           </div>
-          <p className="text-3xl font-bold font-[family-name:var(--font-inter-tight)]">1.12</p>
-          <p className="text-[10px] mt-1 font-[family-name:var(--font-jetbrains-mono)] text-emerald-400">Target: 1.10</p>
+          <p className="text-3xl font-bold text-[#0a1628] font-[family-name:var(--font-inter-tight)]">1.12</p>
+          <p className="text-[10px] mt-1 font-[family-name:var(--font-jetbrains-mono)] text-emerald-500">Target: 1.10</p>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.09 }}
-          className="rounded-2xl bg-[#0a1628] p-5 text-white">
+          className="rounded-2xl bg-white/75 backdrop-blur-sm border border-[#e2e8f0] p-5">
           <div className="flex items-center gap-2 mb-3">
             <Target className="w-4 h-4 text-[#00a6e0]" />
-            <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#64748b]">AI Efficiency</p>
+            <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8]">AI Efficiency</p>
           </div>
-          <p className="text-3xl font-bold font-[family-name:var(--font-inter-tight)]">94<span className="text-sm font-normal text-[#64748b] ml-1">%</span></p>
+          <p className="text-3xl font-bold text-[#0a1628] font-[family-name:var(--font-inter-tight)]">94<span className="text-sm font-normal text-[#94a3b8] ml-1">%</span></p>
           <p className="text-[10px] mt-1 font-[family-name:var(--font-jetbrains-mono)] text-[#00a6e0]">+6% this month</p>
         </motion.div>
       </div>
@@ -212,20 +209,19 @@ export default function DashboardOverview() {
           </div>
         </div>
 
-        {/* PUE — dark card */}
-        <div className="bg-[#0a1628] p-6 rounded-2xl">
+        <div className="bg-white/75 backdrop-blur-sm border border-[#e2e8f0] p-6 rounded-2xl">
           <div className="mb-6">
-            <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#64748b] mb-0.5">This Week</p>
-            <h2 className="text-base font-bold text-white">PUE Trend</h2>
+            <p className="font-[family-name:var(--font-jetbrains-mono)] text-[9px] uppercase tracking-widest text-[#94a3b8] mb-0.5">This Week</p>
+            <h2 className="text-base font-bold text-[#0a1628]">PUE Trend</h2>
           </div>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={efficiencyData} margin={{ left: -15, right: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1E293B" />
-                <XAxis dataKey="day" tick={{ fontSize: 10, fill: "#64748b" }} axisLine={false} tickLine={false} />
-                <YAxis domain={[1.08, 1.18]} tick={{ fontSize: 10, fill: "#64748b" }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={{ borderRadius: "8px", background: "#1E293B", border: "1px solid #334155", fontSize: 12, color: "#e2e8f0" }} />
-                <Line type="monotone" dataKey="pue" stroke="#10B981" strokeWidth={2.5} dot={{ r: 4, fill: "#10B981", stroke: "#0a1628", strokeWidth: 2 }} activeDot={{ r: 5 }} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                <XAxis dataKey="day" tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+                <YAxis domain={[1.08, 1.18]} tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={{ borderRadius: "8px", background: "#fff", border: "1px solid #e2e8f0", fontSize: 12, color: "#0a1628" }} />
+                <Line type="monotone" dataKey="pue" stroke="#00a6e0" strokeWidth={2.5} dot={{ r: 4, fill: "#00a6e0", stroke: "#fff", strokeWidth: 2 }} activeDot={{ r: 5 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -384,14 +380,13 @@ export default function DashboardOverview() {
           </div>
         </div>
 
-        {/* ── Ask Droplet AI — gradient bg ── */}
-        <div className="lg:col-span-3 bg-gradient-to-br from-[#0a1628] to-[#1E293B] rounded-2xl p-6">
+        <div className="lg:col-span-3 bg-white/75 backdrop-blur-sm border border-[#e2e8f0] rounded-2xl p-6">
           <div className="flex items-center gap-3 mb-5">
-            <div className="p-2 bg-white/10 rounded-lg backdrop-blur">
+            <div className="p-2 bg-[#00a6e0]/10 rounded-lg">
               <BotMessageSquare className="w-5 h-5 text-[#00a6e0]" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white">Ask Droplet AI</h2>
+              <h2 className="text-base font-bold text-[#0a1628]">Ask Droplet AI</h2>
               <p className="text-xs text-[#64748b]">Get insights and recommendations from your sensor data</p>
             </div>
           </div>
@@ -403,7 +398,7 @@ export default function DashboardOverview() {
                 <button
                   key={suggestion}
                   onClick={() => setAiQuery(suggestion)}
-                  className="text-xs px-3 py-1.5 rounded-full border border-white/10 text-[#94a3b8] hover:border-[#00a6e0]/50 hover:text-[#00a6e0] hover:bg-[#00a6e0]/10 transition-all font-[family-name:var(--font-jetbrains-mono)] cursor-pointer"
+                  className="text-xs px-3 py-1.5 rounded-full border border-[#e2e8f0] text-[#64748b] hover:border-[#00a6e0]/50 hover:text-[#00a6e0] hover:bg-[#00a6e0]/10 transition-all font-[family-name:var(--font-jetbrains-mono)] cursor-pointer"
                 >
                   {suggestion}
                 </button>
@@ -413,13 +408,13 @@ export default function DashboardOverview() {
 
           {/* Chat messages */}
           {aiMessages.length > 0 && (
-            <div className="space-y-4 mb-5 max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">
+            <div className="space-y-4 mb-5 max-h-64 overflow-y-auto pr-2">
               {aiMessages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                   <div className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                     msg.role === "user"
                       ? "bg-[#00a6e0] text-white rounded-br-md"
-                      : "bg-white/5 border border-white/10 text-[#e2e8f0] rounded-bl-md"
+                      : "bg-white/80 border border-[#e2e8f0] text-[#0a1628] rounded-bl-md"
                   }`}>
                     {msg.text}
                   </div>
@@ -427,7 +422,7 @@ export default function DashboardOverview() {
               ))}
               {isThinking && (
                 <div className="flex justify-start">
-                  <div className="bg-white/5 border border-white/10 px-4 py-3 rounded-2xl rounded-bl-md">
+                  <div className="bg-white/80 border border-[#e2e8f0] px-4 py-3 rounded-2xl rounded-bl-md">
                     <div className="flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#00a6e0] animate-bounce" />
                       <span className="w-1.5 h-1.5 rounded-full bg-[#00a6e0] animate-bounce [animation-delay:0.15s]" />
@@ -447,7 +442,7 @@ export default function DashboardOverview() {
               onChange={(e) => setAiQuery(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleAiSubmit()}
               placeholder="Ask about your water system..."
-              className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#00a6e0]/30 focus:border-[#00a6e0]/50 transition-all"
+              className="flex-1 px-4 py-3 rounded-xl bg-white/80 border border-[#e2e8f0] text-sm text-[#0a1628] placeholder-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#00a6e0]/30 focus:border-[#00a6e0]/50 transition-all"
             />
             <button
               onClick={handleAiSubmit}
