@@ -22,7 +22,7 @@ export default function RequestDemo() {
       <Link className={styles.back} href="/">← Home</Link>
 
       <div className={styles.brand}>
-        <img src="/assets/logo-wordmark.png?v=3" alt="Droplet" />
+        <img src="/assets/logo-wordmark.png" alt="Droplet" />
       </div>
 
       <main className={styles.stage}>

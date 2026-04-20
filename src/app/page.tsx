@@ -269,7 +269,7 @@ export default function Home() {
       <div className={styles.bubbles} ref={bubblesRef} />
 
       <div className={styles.brand}>
-        <img src="/assets/logo-wordmark.png?v=3" alt="Droplet" />
+        <img src="/assets/logo-wordmark.png" alt="Droplet" />
       </div>
 
       <nav className={styles.topNav}>

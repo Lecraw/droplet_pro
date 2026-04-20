@@ -45,7 +45,7 @@ export default function DashboardSidebar() {
     >
       <div className="p-6 flex items-center gap-3 border-b border-[#e2e8f0]">
         <Image
-          src="/assets/logo-wordmark.png?v=3"
+          src="/assets/logo-wordmark.png"
           alt="Droplet"
           width={160}
           height={40}
